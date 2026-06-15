@@ -12,6 +12,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserTalkComposer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import com.eu.habbo.Emulator;
 
 public class HugCommand extends Command {
     public HugCommand() {
