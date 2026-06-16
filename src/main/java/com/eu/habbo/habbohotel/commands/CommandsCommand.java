@@ -34,15 +34,36 @@ public class CommandsCommand extends Command {
             categorized.get(minRank).add(c);
         }
 
+        String searchFilter = params.length > 1 ? params[1].toLowerCase() : null;
+
         for (java.util.Map.Entry<Integer, java.util.List<Command>> entry : categorized.entrySet()) {
             String rankName = Emulator.getGameEnvironment().getPermissionsManager().getRank(entry.getKey()).getName();
-            message.append("--- Categoría: ").append(rankName).append(" ---\r\n");
+            
+            StringBuilder categoryBuilder = new StringBuilder();
+            int cmdCount = 0;
+            
             for (Command c : entry.getValue()) {
-                String cmdName = ":" + c.keys[0];
+                String cmdName = ":" + String.join(", :", c.keys);
                 String description = Emulator.getTexts().getValue("commands.description." + c.permission, "Sin descripción");
-                message.append(String.format("%-20s - %s\r\n", cmdName, description));
+                
+                if (searchFilter != null && !cmdName.toLowerCase().contains(searchFilter) && !description.toLowerCase().contains(searchFilter)) {
+                    continue;
+                }
+                
+                categoryBuilder.append("<tr>");
+                categoryBuilder.append("<td style=\"width: 35%;\">").append(cmdName).append("</td>");
+                categoryBuilder.append("<td style=\"width: 10%; text-align: center;\">-</td>");
+                categoryBuilder.append("<td style=\"width: 55%; text-align: right;\">").append(description).append("</td>");
+                categoryBuilder.append("</tr>");
+                cmdCount++;
             }
-            message.append("\r\n");
+            
+            if (cmdCount > 0) {
+                message.append("<b>--- Categoría: ").append(rankName).append(" ---</b><br/>");
+                message.append("<table style=\"width: 100%; font-size: 11px;\">");
+                message.append(categoryBuilder.toString());
+                message.append("</table><br/>");
+            }
         }
 
         gameClient.getHabbo().alert(new String[]{message.toString()});
