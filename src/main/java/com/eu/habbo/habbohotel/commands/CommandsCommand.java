@@ -14,7 +14,7 @@ public class CommandsCommand extends Command {
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
         StringBuilder message = new StringBuilder(Emulator.getTexts().getValue("commands.generic.cmd_commands.text"));
         List<Command> commands = Emulator.getGameEnvironment().getCommandHandler().getCommandsForRank(gameClient.getHabbo().getHabboInfo().getRank().getId());
-        message.append("(").append(commands.size()).append("):\r\n\r\n");
+        message.append("(").append(commands.size()).append("):\r\n\r\n<div class=\"is-commands-list\" style=\"display:none;\"></div>");
 
         java.util.TreeMap<Integer, java.util.List<Command>> categorized = new java.util.TreeMap<>();
 
@@ -50,17 +50,18 @@ public class CommandsCommand extends Command {
                     continue;
                 }
                 
-                categoryBuilder.append("<tr>");
+                categoryBuilder.append("<tr class=\"cmd-row\">");
                 categoryBuilder.append("<td style=\"width: 35%;\">").append(cmdName).append("</td>");
                 categoryBuilder.append("<td style=\"width: 10%; text-align: center;\">-</td>");
                 categoryBuilder.append("<td style=\"width: 55%; text-align: right;\">").append(description).append("</td>");
                 categoryBuilder.append("</tr>");
                 cmdCount++;
             }
+
             
             if (cmdCount > 0) {
                 message.append("<b>--- Categoría: ").append(rankName).append(" ---</b><br/>");
-                message.append("<table style=\"width: 100%; font-size: 11px;\">");
+                message.append("<table class=\"cmd-table\" style=\"width: 100%; font-size: 13px;\">");
                 message.append(categoryBuilder.toString());
                 message.append("</table><br/>");
             }
