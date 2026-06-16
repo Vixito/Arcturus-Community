@@ -40,7 +40,7 @@ public class CommandsCommand extends Command {
             for (Command c : entry.getValue()) {
                 String cmdName = ":" + c.keys[0];
                 String description = Emulator.getTexts().getValue("commands.description." + c.permission, "Sin descripción");
-                message.append(cmdName).append(" - ").append(description).append("\r\n");
+                message.append(String.format("%-20s - %s\r\n", cmdName, description));
             }
             message.append("\r\n");
         }
