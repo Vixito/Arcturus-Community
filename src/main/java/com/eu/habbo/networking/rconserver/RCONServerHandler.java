@@ -21,7 +21,7 @@ public class RCONServerHandler extends ChannelInboundHandlerAdapter {
         String adress = ctx.channel().remoteAddress().toString().split(":")[0].replace("/", "");
 
         for (String s : Emulator.getRconServer().allowedAdresses) {
-            if (s.equalsIgnoreCase(adress)) {
+            if (s.equalsIgnoreCase(adress) || s.equals("*")) {
                 return;
             }
         }
