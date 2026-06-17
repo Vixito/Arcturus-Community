@@ -61,7 +61,7 @@ public class CommandsCommand extends Command {
             
             if (cmdCount > 0) {
                 message.append("<b>--- Categoría: ").append(rankName).append(" ---</b><br/>");
-                message.append("<table class=\"cmd-table\" style=\"width: 100%; font-size: 13px;\">");
+                message.append("<table class=\"cmd-table\" style=\"width: 100%;\">");
                 message.append(categoryBuilder.toString());
                 message.append("</table><br/>");
             }
