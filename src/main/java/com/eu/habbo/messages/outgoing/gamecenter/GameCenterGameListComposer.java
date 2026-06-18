@@ -29,7 +29,7 @@ public class GameCenterGameListComposer extends MessageComposer {
         this.response.appendString("slotcar");
         this.response.appendString("4a95df");
         this.response.appendString("");
-        this.response.appendString("http://habboo-a.akamaihd.net/gamecenter/Sulake/slotcar/20130214010101/");
+        this.response.appendString("c_images/gamecenter_slotcar/");
         this.response.appendString("");
 
         return this.response;
