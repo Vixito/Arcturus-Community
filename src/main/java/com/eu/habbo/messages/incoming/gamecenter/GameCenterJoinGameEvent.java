@@ -16,8 +16,8 @@ public class GameCenterJoinGameEvent extends MessageHandler {
             this.client.sendResponse(new GameCenterAchievementsConfigurationComposer());
             this.client.sendResponse(new BaseJumpLoadGameURLComposer());
             this.client.sendResponse(new BaseJumpLoadGameComposer(this.client, 3));
-        } else if (gameId == 4) {
-            this.client.sendResponse(new BaseJumpJoinQueueComposer(4));
+        } else if (gameId == 4 || gameId == 0) {
+            this.client.sendResponse(new BaseJumpJoinQueueComposer(gameId));
             this.client.sendResponse(new BaseJumpLoadGameURLComposer());
         }
     }

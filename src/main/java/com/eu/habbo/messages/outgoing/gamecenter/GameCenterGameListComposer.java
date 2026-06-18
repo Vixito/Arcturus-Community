@@ -9,7 +9,7 @@ public class GameCenterGameListComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GameCenterGameListComposer);
-        this.response.appendInt(2);//Count
+        this.response.appendInt(3);//Count
 
         this.response.appendInt(0);
         this.response.appendString("snowwar");
