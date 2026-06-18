@@ -10,7 +10,7 @@ public class SnowStormLoadGameURLComposer extends MessageComposer {
         this.response.init(Outgoing.BaseJumpLoadGameURLComposer);
         this.response.appendInt(0);
         this.response.appendString("snowstorm_version_1");
-        this.response.appendString("/games/snowstorm/index.html");
+        this.response.appendString("/game/games/snowstorm/index.html");
         return this.response;
     }
 }
