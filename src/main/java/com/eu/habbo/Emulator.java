@@ -17,6 +17,7 @@ import com.eu.habbo.plugin.events.emulator.EmulatorStartShutdownEvent;
 import com.eu.habbo.plugin.events.emulator.EmulatorStoppedEvent;
 import com.eu.habbo.threading.ThreadPooling;
 import com.eu.habbo.util.imager.badges.BadgeImager;
+import com.eu.habbo.core.RedisPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -152,6 +153,9 @@ public final class Emulator {
             Emulator.rconServer.connect();
             Emulator.badgeImager = new BadgeImager();
 
+            // Initialize Redis publisher for real-time CMS notifications
+            RedisPublisher.getInstance();
+
             LOGGER.info("Arcturus Morningstar has successfully loaded.");
             LOGGER.info("System launched in: {}ms. Using {} threads!", (System.nanoTime() - startTime) / 1e6, Runtime.getRuntime().availableProcessors() * 2);
             LOGGER.info("Memory: {}/{}MB", (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024), (runtime.freeMemory()) / (1024 * 1024));
@@ -286,6 +290,11 @@ public final class Emulator {
         }
 
         LOGGER.info("Stopped Arcturus Morningstar {}", version);
+
+        try {
+            RedisPublisher.getInstance().dispose();
+        } catch (Exception e) {
+        }
 
         if (Emulator.database != null) {
             Emulator.getDatabase().dispose();

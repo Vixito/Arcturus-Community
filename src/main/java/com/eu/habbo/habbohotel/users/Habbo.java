@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.users;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.core.RedisPublisher;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
@@ -472,6 +473,8 @@ public class Habbo implements Runnable {
 
             this.client.getHabbo().getHabboInfo().getCurrentRoom().unIdle(this.client.getHabbo());
             this.client.getHabbo().getHabboInfo().getCurrentRoom().dance(this.client.getHabbo().getRoomUnit(), DanceType.NONE);
+
+            RedisPublisher.getInstance().notifyLeaderboardUpdate();
         }
     }
 

@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.users;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.core.RedisPublisher;
 import com.eu.habbo.habbohotel.catalog.CatalogItem;
 import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GamePlayer;
@@ -243,11 +244,13 @@ public class HabboInfo implements Runnable {
     public void addCurrencyAmount(int type, int amount) {
         this.currencies.adjustOrPutValue(type, amount, amount);
         this.run();
+        RedisPublisher.getInstance().notifyLeaderboardUpdate();
     }
 
     public void setCurrencyAmount(int type, int amount) {
         this.currencies.put(type, amount);
         this.run();
+        RedisPublisher.getInstance().notifyLeaderboardUpdate();
     }
 
     public int getId() {
@@ -345,11 +348,13 @@ public class HabboInfo implements Runnable {
     public void setCredits(int credits) {
         this.credits = credits;
         this.run();
+        RedisPublisher.getInstance().notifyLeaderboardUpdate();
     }
 
     public void addCredits(int credits) {
         this.credits += credits;
         this.run();
+        RedisPublisher.getInstance().notifyLeaderboardUpdate();
     }
 
     public int getPixels() {

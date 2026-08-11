@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import com.eu.habbo.Emulator;
+import com.eu.habbo.core.RedisPublisher;
 
 public class KissCommand extends Command {
     public KissCommand() {
@@ -53,6 +54,8 @@ public class KissCommand extends Command {
             } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
+
+            RedisPublisher.getInstance().notifyLeaderboardUpdate();
 
             // Send Action
             room.sendComposer(new RoomUserActionComposer(gameClient.getHabbo().getRoomUnit(), RoomUserAction.BLOW_KISS).compose());
