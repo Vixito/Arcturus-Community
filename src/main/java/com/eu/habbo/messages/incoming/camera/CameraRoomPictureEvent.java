@@ -14,24 +14,22 @@ public class CameraRoomPictureEvent extends MessageHandler {
             return;
         }
 
-        if (CameraClient.isLoggedIn) {
-            this.packet.getBuffer().readFloat();
+        // Bypass CameraClient check for Nitro
+        this.packet.getBuffer().readFloat();
+        byte[] data = this.packet.getBuffer().readBytes(this.packet.getBuffer().readableBytes()).array();
+        String content = new String(ZIP.inflate(data));
+        
+        // Mock timestamp
+        int timestamp = Emulator.getIntUnixTimestamp();
+        this.client.getHabbo().getHabboInfo().setPhotoJSON(Emulator.getConfig().getValue("camera.extradata").replace("%timestamp%", timestamp + ""));
+        this.client.getHabbo().getHabboInfo().setPhotoTimestamp(timestamp);
 
-            byte[] data = this.packet.getBuffer().readBytes(this.packet.getBuffer().readableBytes()).array();
-
-            String content = new String(ZIP.inflate(data));
-            CameraRenderImageComposer composer = new CameraRenderImageComposer(this.client.getHabbo().getHabboInfo().getId(), this.client.getHabbo().getHabboInfo().getCurrentRoom().getBackgroundTonerColor().getRGB(), 320, 320, content);
-            this.client.getHabbo().getHabboInfo().setPhotoJSON(Emulator.getConfig().getValue("camera.extradata").replace("%timestamp%", composer.timestamp + ""));
-            this.client.getHabbo().getHabboInfo().setPhotoTimestamp(composer.timestamp);
-
-            if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
-                this.client.getHabbo().getHabboInfo().setPhotoRoomId(this.client.getHabbo().getHabboInfo().getCurrentRoom().getId());
-            }
-
-            Emulator.getCameraClient().sendMessage(composer);
-        } else {
-            this.client.getHabbo().alert(Emulator.getTexts().getValue("camera.disabled"));
+        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
+            this.client.getHabbo().getHabboInfo().setPhotoRoomId(this.client.getHabbo().getHabboInfo().getCurrentRoom().getId());
         }
+
+        // Send a dummy URL back to the client to satisfy it (Nitro handles the real upload)
+        this.client.sendResponse(new com.eu.habbo.messages.outgoing.camera.CameraURLComposer(""));
 
     }
 }

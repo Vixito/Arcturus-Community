@@ -18,20 +18,14 @@ public class CameraRoomThumbnailEvent extends MessageHandler {
         if (!this.client.getHabbo().getHabboInfo().getCurrentRoom().isOwner(this.client.getHabbo()))
             return;
 
-        if (CameraClient.isLoggedIn) {
-            this.packet.getBuffer().readFloat();
-            byte[] data = this.packet.getBuffer().readBytes(this.packet.getBuffer().readableBytes()).array();
-            String content = new String(ZIP.inflate(data));
+        // Bypass CameraClient check for Nitro
+        this.packet.getBuffer().readFloat();
+        byte[] data = this.packet.getBuffer().readBytes(this.packet.getBuffer().readableBytes()).array();
+        String content = new String(ZIP.inflate(data));
 
-            CameraRenderImageComposer composer = new CameraRenderImageComposer(this.client.getHabbo().getHabboInfo().getId(), this.client.getHabbo().getHabboInfo().getCurrentRoom().getBackgroundTonerColor().getRGB(), 110, 110, content);
+        int timestamp = Emulator.getIntUnixTimestamp();
+        this.client.getHabbo().getHabboInfo().setPhotoJSON(Emulator.getConfig().getValue("camera.extradata").replace("%timestamp%", timestamp + ""));
+        this.client.getHabbo().getHabboInfo().setPhotoTimestamp(timestamp);
 
-            this.client.getHabbo().getHabboInfo().setPhotoJSON(Emulator.getConfig().getValue("camera.extradata").replace("%timestamp%", composer.timestamp + ""));
-            this.client.getHabbo().getHabboInfo().setPhotoTimestamp(composer.timestamp);
-
-            Emulator.getCameraClient().sendMessage(composer);
-        } else {
-            this.client.sendResponse(new CameraRoomThumbnailSavedComposer());
-            this.client.getHabbo().alert(Emulator.getTexts().getValue("camera.disabled"));
-        }
-    }
+        this.client.sendResponse(new CameraRoomThumbnailSavedComposer());
 }
