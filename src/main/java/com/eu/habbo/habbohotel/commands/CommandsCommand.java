@@ -41,14 +41,15 @@ public class CommandsCommand extends Command {
         String searchFilter = params.length > 1 ? params[1].toLowerCase() : null;
 
         for (java.util.Map.Entry<Integer, java.util.List<Command>> entry : categorized.entrySet()) {
-            String rankName = Emulator.getGameEnvironment().getPermissionsManager().getRank(entry.getKey()).getName();
+            com.eu.habbo.habbohotel.permissions.Rank rankObj = Emulator.getGameEnvironment().getPermissionsManager().getRank(entry.getKey());
+            String rankName = (rankObj != null) ? rankObj.getName() : "Rango " + entry.getKey();
             
             StringBuilder categoryBuilder = new StringBuilder();
             int cmdCount = 0;
             
             for (Command c : entry.getValue()) {
                 String cmdName = ":" + String.join(", :", c.keys);
-                String description = Emulator.getTexts().getValue("commands.description." + c.permission, "Sin descripción");
+                String description = (c.permission != null) ? Emulator.getTexts().getValue("commands.description." + c.permission, "Sin descripción") : "Sin descripción";
                 
                 if (searchFilter != null && !cmdName.toLowerCase().contains(searchFilter) && !description.toLowerCase().contains(searchFilter)) {
                     continue;

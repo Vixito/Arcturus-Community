@@ -31,8 +31,10 @@ public class CommandHandler {
     private final static THashMap<String, Command> commands = new THashMap<>(5);
     private static final Comparator<Command> ALPHABETICAL_ORDER = new Comparator<Command>() {
         public int compare(Command c1, Command c2) {
-            int res = String.CASE_INSENSITIVE_ORDER.compare(c1.permission, c2.permission);
-            return (res != 0) ? res : c1.permission.compareTo(c2.permission);
+            String p1 = (c1 != null && c1.permission != null) ? c1.permission : (c1 != null && c1.keys != null && c1.keys.length > 0 ? c1.keys[0] : "");
+            String p2 = (c2 != null && c2.permission != null) ? c2.permission : (c2 != null && c2.keys != null && c2.keys.length > 0 ? c2.keys[0] : "");
+            int res = String.CASE_INSENSITIVE_ORDER.compare(p1, p2);
+            return (res != 0) ? res : p1.compareTo(p2);
         }
     };
 
