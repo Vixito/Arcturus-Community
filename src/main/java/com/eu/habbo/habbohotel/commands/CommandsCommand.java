@@ -49,27 +49,43 @@ public class CommandsCommand extends Command {
             
             for (Command c : entry.getValue()) {
                 String cmdName = ":" + String.join(", :", c.keys);
-                String description = (c.permission != null) ? Emulator.getTexts().getValue("commands.description." + c.permission, "Sin descripción") : "Sin descripción";
+                String descKey = (c.permission != null) ? "commands.description." + c.permission : (c.keys != null && c.keys.length > 0 ? "commands.description.cmd_" + c.keys[0] : "");
+                String description = !descKey.isEmpty() ? Emulator.getTexts().getValue(descKey, "Sin descripción") : "Sin descripción";
+
+                if (description == null || description.isEmpty() || description.equals("Sin descripción")) {
+                    if (c.keys != null && c.keys.length > 0) {
+                        String key = c.keys[0].toLowerCase();
+                        if (key.equals("kiss") || key.equals("beso")) description = "Besa a otro usuario.";
+                        else if (key.equals("hug") || key.equals("abrazo")) description = "Abraza a otro usuario.";
+                        else if (key.equals("test")) description = "Comando de prueba técnica.";
+                        else if (key.equals("warp")) description = "Teletransporta a un usuario a tu posición.";
+                        else if (key.equals("wordquiz")) description = "Inicia un quiz de preguntas en la sala.";
+                        else description = "Ejecuta :" + key;
+                    } else {
+                        description = "Sin descripción";
+                    }
+                }
                 
                 if (searchFilter != null && !cmdName.toLowerCase().contains(searchFilter) && !description.toLowerCase().contains(searchFilter)) {
                     continue;
                 }
                 
                 categoryBuilder.append("<tr class=\"cmd-row\" style=\"border-bottom: 1px solid rgba(0,0,0,0.12);\">");
-                categoryBuilder.append("<td style=\"width: 40%; padding: 4px 2px; vertical-align: top; font-weight: bold;\">").append(cmdName).append("</td>");
-                categoryBuilder.append("<td style=\"width: 60%; padding: 4px 2px; vertical-align: top; font-size: 11px; color: #222;\">").append(description).append("</td>");
+                categoryBuilder.append("<td style=\"width: 38%; padding: 5px 4px; vertical-align: middle; font-weight: bold; color: #0f172a;\">").append(cmdName).append("</td>");
+                categoryBuilder.append("<td style=\"width: 62%; padding: 5px 4px; vertical-align: middle; font-size: 11px; color: #334155;\">").append(description).append("</td>");
                 categoryBuilder.append("</tr>");
                 cmdCount++;
             }
 
             if (cmdCount > 0) {
-                message.append("<div style=\"margin-top: 8px; margin-bottom: 4px;\">");
-                message.append("<b>--- Categoría: ").append(rankName).append(" ---</b>");
+                message.append("<div class=\"cmd-category-block\" data-category=\"").append(rankName).append("\" style=\"margin-bottom: 12px;\">");
+                message.append("<div class=\"cmd-cat-title\" style=\"margin-top: 8px; margin-bottom: 4px; font-weight: bold; color: #1e293b; background: rgba(0,0,0,0.06); padding: 4px 8px; border-radius: 4px;\">");
+                message.append("Categoría: ").append(rankName);
                 message.append("</div>");
-                message.append("<table class=\"cmd-table\" style=\"width: 100%; border-collapse: collapse; margin-bottom: 8px;\">");
+                message.append("<table class=\"cmd-table\" style=\"width: 100%; border-collapse: collapse;\">");
                 message.append(categoryBuilder.toString());
                 message.append("</table>");
-                message.append("<hr style=\"border: 0; border-top: 1px solid #ccc; margin: 6px 0 10px 0;\"/>");
+                message.append("</div>");
             }
         }
 
