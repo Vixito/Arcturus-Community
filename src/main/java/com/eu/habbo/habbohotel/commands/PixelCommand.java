@@ -12,6 +12,10 @@ public class PixelCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
+        if (params.length < 3) {
+            gameClient.getHabbo().whisper("Uso correcto: :duckets <usuario> <cantidad>", RoomChatMessageBubbles.ALERT);
+            return true;
+        }
         if (params.length == 3) {
             Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(params[1]);
 

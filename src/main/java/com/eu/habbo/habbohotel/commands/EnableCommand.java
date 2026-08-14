@@ -17,13 +17,17 @@ public class EnableCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
-        if (params.length >= 2) {
-            int effectId;
-            try {
-                effectId = Integer.parseInt(params[1]);
-            } catch (Exception e) {
-                return false;
-            }
+        if (params.length < 2) {
+            gameClient.getHabbo().whisper("Uso correcto: :enable <id_efecto> [usuario]", RoomChatMessageBubbles.ALERT);
+            return true;
+        }
+        int effectId;
+        try {
+            effectId = Integer.parseInt(params[1]);
+        } catch (Exception e) {
+            gameClient.getHabbo().whisper("Uso correcto: :enable <id_efecto> [usuario]", RoomChatMessageBubbles.ALERT);
+            return true;
+        }
             Habbo target = gameClient.getHabbo();
             if (params.length == 3) {
                 target = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbo(params[2]);
@@ -47,7 +51,6 @@ public class EnableCommand extends Command {
                     }
                 }
             }
-        }
         return true;
     }
 }

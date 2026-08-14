@@ -11,16 +11,18 @@ public class HandItemCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
-        if (params.length == 2) {
-            try {
-                if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
-                    int effectId = Integer.parseInt(params[1]);
-                    gameClient.getHabbo().getRoomUnit().setHandItem(effectId);
-                    gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserHandItemComposer(gameClient.getHabbo().getRoomUnit()).compose());
-                }
-            } catch (Exception e) {
-                //Don't handle incorrect parse exceptions :P
+        if (params.length != 2) {
+            gameClient.getHabbo().whisper("Uso correcto: :hand_item <id_item>");
+            return true;
+        }
+        try {
+            if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
+                int effectId = Integer.parseInt(params[1]);
+                gameClient.getHabbo().getRoomUnit().setHandItem(effectId);
+                gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserHandItemComposer(gameClient.getHabbo().getRoomUnit()).compose());
             }
+        } catch (Exception e) {
+            gameClient.getHabbo().whisper("Uso correcto: :hand_item <id_item>");
         }
         return true;
     }

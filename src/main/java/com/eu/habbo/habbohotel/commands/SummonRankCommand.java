@@ -18,13 +18,17 @@ public class SummonRankCommand extends Command {
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
         int minRank;
 
-        if (params.length >= 2) {
-            try {
-                minRank = Integer.parseInt(params[1]);
-            } catch (Exception e) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.generic.cmd_summonrank.error"), RoomChatMessageBubbles.ALERT);
-                return true;
-            }
+        if (params.length < 2) {
+            gameClient.getHabbo().whisper("Uso correcto: :summonrank <id_rango>", RoomChatMessageBubbles.ALERT);
+            return true;
+        }
+
+        try {
+            minRank = Integer.parseInt(params[1]);
+        } catch (Exception e) {
+            gameClient.getHabbo().whisper("Uso correcto: :summonrank <id_rango>", RoomChatMessageBubbles.ALERT);
+            return true;
+        }
 
             for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
                 if (set.getValue().getHabboInfo().getRank().getId() >= minRank) {
@@ -49,7 +53,6 @@ public class SummonRankCommand extends Command {
 
                 }
             }
-        }
 
         return true;
     }
