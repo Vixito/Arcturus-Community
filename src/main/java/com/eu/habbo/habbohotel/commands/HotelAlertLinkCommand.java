@@ -12,6 +12,7 @@ public class HotelAlertLinkCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
         if (params.length < 3) {
+            gameClient.getHabbo().whisper("Uso correcto: :hal <url> <mensaje>");
             return true;
         }
 

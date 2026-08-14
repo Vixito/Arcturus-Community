@@ -2,45 +2,31 @@ package com.eu.habbo.habbohotel.commands;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.habbohotel.permissions.Permission;
-import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 
 public class TestCommand extends Command {
     public TestCommand() {
-        super("acc_debug", new String[]{"test"});
+        super(null, new String[]{"test"});
     }
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
-        if (gameClient.getHabbo() != null || !gameClient.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL) || !Emulator.debugging)
-            return false;
+        if (gameClient.getHabbo() == null) return false;
 
-        int header = Integer.valueOf(params[1]);
+        long freeMem = Emulator.getRuntime().freeMemory() / (1024 * 1024);
+        long totalMem = Emulator.getRuntime().totalMemory() / (1024 * 1024);
+        int onlineCount = Emulator.getGameEnvironment().getHabboManager().getOnlineCount();
+        String roomInfo = (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) 
+            ? "Sala #" + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId() + " (" + gameClient.getHabbo().getRoomUnit().getX() + ", " + gameClient.getHabbo().getRoomUnit().getY() + ", " + gameClient.getHabbo().getRoomUnit().getZ() + ")"
+            : "Fuera de sala";
 
-        ServerMessage message = new ServerMessage(header);
+        String testReport = "🧪 [TEST OK] Emulador Habbten funcionando correctamente.\n"
+            + "• Usuario: " + gameClient.getHabbo().getHabboInfo().getUsername() + " (Rango " + gameClient.getHabbo().getHabboInfo().getRank().getId() + ")\n"
+            + "• Ubicación: " + roomInfo + "\n"
+            + "• Usuarios online: " + onlineCount + "\n"
+            + "• Memoria: " + (totalMem - freeMem) + "MB / " + totalMem + "MB RAM";
 
-        for (int i = 1; i < params.length; i++) {
-            String[] data = params[i].split(":");
-
-            if (data[0].equalsIgnoreCase("b")) {
-                message.appendBoolean(data[1].equalsIgnoreCase("1"));
-            } else if (data[0].equalsIgnoreCase("s")) {
-                if (data.length > 1) {
-                    message.appendString(data[1]);
-                } else {
-                    message.appendString("");
-                }
-            } else if (data[0].equals("i")) {
-                message.appendInt(Integer.valueOf(data[1]));
-            } else if (data[0].equalsIgnoreCase("by")) {
-                message.appendByte(Integer.valueOf(data[1]));
-            } else if (data[0].equalsIgnoreCase("sh")) {
-                message.appendShort(Integer.valueOf(data[1]));
-            }
-        }
-
-        gameClient.sendResponse(message);
-
+        gameClient.getHabbo().whisper(testReport, RoomChatMessageBubbles.ALERT);
         return true;
     }
 }
