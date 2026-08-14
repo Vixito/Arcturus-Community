@@ -54,20 +54,21 @@ public class CommandsCommand extends Command {
                     continue;
                 }
                 
-                categoryBuilder.append("<tr class=\"cmd-row\">");
-                categoryBuilder.append("<td style=\"width: 35%;\">").append(cmdName).append("</td>");
-                categoryBuilder.append("<td style=\"width: 10%; text-align: center;\">-</td>");
-                categoryBuilder.append("<td style=\"width: 55%; text-align: right;\">").append(description).append("</td>");
+                categoryBuilder.append("<tr class=\"cmd-row\" style=\"border-bottom: 1px solid rgba(0,0,0,0.12);\">");
+                categoryBuilder.append("<td style=\"width: 40%; padding: 4px 2px; vertical-align: top; font-weight: bold;\">").append(cmdName).append("</td>");
+                categoryBuilder.append("<td style=\"width: 60%; padding: 4px 2px; vertical-align: top; font-size: 11px; color: #222;\">").append(description).append("</td>");
                 categoryBuilder.append("</tr>");
                 cmdCount++;
             }
 
-            
             if (cmdCount > 0) {
-                message.append("<b>--- Categoría: ").append(rankName).append(" ---</b><br/>");
-                message.append("<table class=\"cmd-table\" style=\"width: 100%;\">");
+                message.append("<div style=\"margin-top: 8px; margin-bottom: 4px;\">");
+                message.append("<b>--- Categoría: ").append(rankName).append(" ---</b>");
+                message.append("</div>");
+                message.append("<table class=\"cmd-table\" style=\"width: 100%; border-collapse: collapse; margin-bottom: 8px;\">");
                 message.append(categoryBuilder.toString());
-                message.append("</table><br/>");
+                message.append("</table>");
+                message.append("<hr style=\"border: 0; border-top: 1px solid #ccc; margin: 6px 0 10px 0;\"/>");
             }
         }
 
