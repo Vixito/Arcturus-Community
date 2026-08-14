@@ -30,8 +30,7 @@ public class RoomDanceCommand extends Command {
             }
 
             for (Habbo habbo : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos()) {
-                habbo.getRoomUnit().setDanceType(DanceType.values()[danceId]);
-                habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDanceComposer(habbo.getRoomUnit()).compose());
+                gameClient.getHabbo().getHabboInfo().getCurrentRoom().dance(habbo, DanceType.values()[danceId]);
             }
         } else {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_danceall.no_dance"), RoomChatMessageBubbles.ALERT);

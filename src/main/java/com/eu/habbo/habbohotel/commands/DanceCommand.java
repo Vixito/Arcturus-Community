@@ -18,15 +18,6 @@ public class DanceCommand extends Command {
                 int danceId = Integer.parseInt(params[1]);
                 if (danceId >= 0 && danceId <= 4) {
                     if (gameClient.getHabbo().getRoomUnit().isInRoom()) {
-                        
-                        // Check HC for dances 2, 3, 4
-                        if (danceId > 1 && !gameClient.getHabbo().getHabboStats().hasActiveClub()) {
-                            gameClient.getHabbo().whisper("Solo los miembros del Habbo Club pueden usar este baile.", com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles.ALERT);
-                            return true; // do nothing if not HC
-                        }
-                        
-                        gameClient.getHabbo().getRoomUnit().setDanceType(DanceType.values()[danceId]);
-                        
                         UserIdleEvent event = new UserIdleEvent(gameClient.getHabbo(), UserIdleEvent.IdleReason.DANCE, false);
                         Emulator.getPluginManager().fireEvent(event);
                         
@@ -34,7 +25,7 @@ public class DanceCommand extends Command {
                             gameClient.getHabbo().getHabboInfo().getCurrentRoom().unIdle(gameClient.getHabbo());
                         }
                         
-                        gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDanceComposer(gameClient.getHabbo().getRoomUnit()).compose());
+                        gameClient.getHabbo().getHabboInfo().getCurrentRoom().dance(gameClient.getHabbo(), DanceType.values()[danceId]);
                     }
                 }
             } catch (Exception e) {
