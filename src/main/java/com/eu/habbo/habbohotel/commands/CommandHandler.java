@@ -310,7 +310,7 @@ public class CommandHandler {
                 if (allowedCommands.contains(command))
                     continue;
 
-                if (permissions.containsKey(command.permission) && permissions.get(command.permission).setting != PermissionSetting.DISALLOWED) {
+                if (command.permission == null || (permissions.containsKey(command.permission) && permissions.get(command.permission).setting != PermissionSetting.DISALLOWED)) {
                     allowedCommands.add(command);
                 }
             }
