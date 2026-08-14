@@ -28,4 +28,5 @@ public class CameraRoomThumbnailEvent extends MessageHandler {
         this.client.getHabbo().getHabboInfo().setPhotoTimestamp(timestamp);
 
         this.client.sendResponse(new CameraRoomThumbnailSavedComposer());
+    }
 }
