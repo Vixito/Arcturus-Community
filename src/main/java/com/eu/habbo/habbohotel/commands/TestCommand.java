@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 
 public class TestCommand extends Command {
     public TestCommand() {
-        super(null, new String[]{"test"});
+        super("cmd_test", new String[]{"test"});
     }
 
     @Override

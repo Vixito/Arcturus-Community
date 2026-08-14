@@ -23,7 +23,7 @@ public class HotelAlertLinkCommand extends Command {
             message.append(" ");
         }
 
-        message.append("\r\r-<b>").append(gameClient.getHabbo().getHabboInfo().getUsername()).append("</b>");
+        message.append("\r\n\r\nAtte.\r\n<b>").append(gameClient.getHabbo().getHabboInfo().getUsername()).append("</b>");
 
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new StaffAlertWithLinkComposer(message.toString(), url).compose());
         return true;
