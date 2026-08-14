@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 
 public class ArcturusCommand extends Command {
     public ArcturusCommand() {
-        super(null, new String[]{"arcturus", "emulator"});
+        super("cmd_arcturus", new String[]{"arcturus", "emulator"});
     }
 
     @Override

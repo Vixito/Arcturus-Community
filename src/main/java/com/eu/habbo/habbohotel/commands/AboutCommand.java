@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 public class AboutCommand extends Command {
     public AboutCommand() {
-        super(null, new String[]{"about", "info", "online", "server"});
+        super("cmd_about", new String[]{"about", "info", "online", "server"});
     }
     public static String credits = "Arcturus Morningstar is an opensource project based on Arcturus By TheGeneral \n" +
             "The Following people have all contributed to this emulator:\n" +
