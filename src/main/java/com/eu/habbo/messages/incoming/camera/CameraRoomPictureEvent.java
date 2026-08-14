@@ -26,11 +26,12 @@ public class CameraRoomPictureEvent extends MessageHandler {
         int timestamp = Emulator.getIntUnixTimestamp();
         int roomId = (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) ? this.client.getHabbo().getHabboInfo().getCurrentRoom().getId() : 0;
         String photoUrl = "photo_" + this.client.getHabbo().getHabboInfo().getId() + "_" + timestamp + ".png";
+        String fullUrl = "/api/camera/" + photoUrl;
         
-        this.client.getHabbo().getHabboInfo().setPhotoURL(photoUrl);
+        this.client.getHabbo().getHabboInfo().setPhotoURL(fullUrl);
         this.client.getHabbo().getHabboInfo().setPhotoJSON(Emulator.getConfig().getValue("camera.extradata")
             .replace("%timestamp%", timestamp + "")
-            .replace("%url%", photoUrl)
+            .replace("%url%", fullUrl)
             .replace("%room_id%", roomId + ""));
         this.client.getHabbo().getHabboInfo().setPhotoTimestamp(timestamp);
         this.client.getHabbo().getHabboInfo().setPhotoRoomId(roomId);
