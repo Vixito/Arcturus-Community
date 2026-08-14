@@ -15,9 +15,12 @@ public class CameraRoomPictureEvent extends MessageHandler {
         }
 
         // Bypass CameraClient check for Nitro
-        this.packet.getBuffer().readFloat();
-        byte[] data = this.packet.getBuffer().readBytes(this.packet.getBuffer().readableBytes()).array();
-        String content = new String(ZIP.inflate(data));
+        if (this.packet.getBuffer().readableBytes() > 4) {
+            this.packet.getBuffer().readFloat();
+            int readable = this.packet.getBuffer().readableBytes();
+            byte[] data = new byte[readable];
+            this.packet.getBuffer().readBytes(data);
+        }
         
         // Mock timestamp and URL
         int timestamp = Emulator.getIntUnixTimestamp();

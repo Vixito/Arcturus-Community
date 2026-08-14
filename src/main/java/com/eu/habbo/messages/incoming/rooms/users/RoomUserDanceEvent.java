@@ -14,7 +14,7 @@ public class RoomUserDanceEvent extends MessageHandler {
             return;
 
         int danceId = this.packet.readInt();
-        if (danceId >= 0 && danceId <= 5) {
+        if (danceId >= 0 && danceId < DanceType.values().length) {
             if (this.client.getHabbo().getRoomUnit().isInRoom()) {
 
                 Habbo habbo = this.client.getHabbo();
@@ -29,8 +29,6 @@ public class RoomUserDanceEvent extends MessageHandler {
                     }
                 }
 
-                habbo.getRoomUnit().setDanceType(DanceType.values()[danceId]);
-
                 UserIdleEvent event = new UserIdleEvent(this.client.getHabbo(), UserIdleEvent.IdleReason.DANCE, false);
                 Emulator.getPluginManager().fireEvent(event);
 
@@ -40,7 +38,7 @@ public class RoomUserDanceEvent extends MessageHandler {
                     }
                 }
 
-                this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDanceComposer(habbo.getRoomUnit()).compose());
+                this.client.getHabbo().getHabboInfo().getCurrentRoom().dance(habbo, DanceType.values()[danceId]);
             }
         }
     }
