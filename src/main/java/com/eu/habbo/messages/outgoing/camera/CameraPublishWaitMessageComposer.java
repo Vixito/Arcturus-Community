@@ -21,10 +21,7 @@ public class CameraPublishWaitMessageComposer extends MessageComposer {
 
         this.response.appendBoolean(this.isOk);
         this.response.appendInt(this.cooldownSeconds);
-
-        if (!this.extraDataId.isEmpty()) {
-            this.response.appendString(this.extraDataId);
-        }
+        this.response.appendString(this.extraDataId != null ? this.extraDataId : "");
 
         return this.response;
     }

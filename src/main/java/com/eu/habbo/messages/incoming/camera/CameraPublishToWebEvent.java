@@ -30,6 +30,7 @@ public class CameraPublishToWebEvent extends MessageHandler {
 
         if (habbo.getHabboInfo().getCurrencyAmount(CameraPublishToWebEvent.CAMERA_PUBLISH_POINTS_TYPE) < CameraPublishToWebEvent.CAMERA_PUBLISH_POINTS) {
             this.client.sendResponse(new NotEnoughPointsTypeComposer(false, true, CameraPublishToWebEvent.CAMERA_PUBLISH_POINTS));
+            this.client.sendResponse(new CameraPublishWaitMessageComposer(false, 0, ""));
             return;
         }
 
