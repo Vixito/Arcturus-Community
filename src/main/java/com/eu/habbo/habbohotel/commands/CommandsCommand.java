@@ -12,9 +12,9 @@ public class CommandsCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
-        StringBuilder message = new StringBuilder(Emulator.getTexts().getValue("commands.generic.cmd_commands.text"));
         List<Command> commands = Emulator.getGameEnvironment().getCommandHandler().getCommandsForRank(gameClient.getHabbo().getHabboInfo().getRank().getId());
-        message.append("(").append(commands.size()).append("):\r\n\r\n<div class=\"is-commands-list\" style=\"display:none;\"></div>");
+        java.util.List<String> messageList = new java.util.ArrayList<>();
+        messageList.add("<b>" + Emulator.getTexts().getValue("commands.generic.cmd_commands.text") + " (" + commands.size() + "):</b><div class=\"is-commands-list\" style=\"display:none;\"></div>");
 
         java.util.TreeMap<Integer, java.util.List<Command>> categorized = new java.util.TreeMap<>();
 
@@ -57,7 +57,7 @@ public class CommandsCommand extends Command {
                         String key = c.keys[0].toLowerCase();
                         if (key.equals("kiss") || key.equals("beso")) description = "Besa a otro usuario.";
                         else if (key.equals("hug") || key.equals("abrazo")) description = "Abraza a otro usuario.";
-                        else if (key.equals("test")) description = "Comando de prueba técnica.";
+                        else if (key.equals("test")) description = "Ejecuta un diagnóstico del emulador: sala, usuarios y uso de memoria RAM. Uso: :test";
                         else if (key.equals("warp")) description = "Teletransporta a un usuario a tu posición.";
                         else if (key.equals("wordquiz")) description = "Inicia un quiz de preguntas en la sala.";
                         else description = "Ejecuta :" + key;
@@ -78,18 +78,20 @@ public class CommandsCommand extends Command {
             }
 
             if (cmdCount > 0) {
-                message.append("<div class=\"cmd-category-block\" data-category=\"").append(rankName).append("\" style=\"margin-bottom: 12px;\">");
-                message.append("<div class=\"cmd-cat-title\" style=\"margin-top: 8px; margin-bottom: 4px; font-weight: bold; color: #1e293b; background: rgba(0,0,0,0.06); padding: 4px 8px; border-radius: 4px;\">");
-                message.append("Categoría: ").append(rankName);
-                message.append("</div>");
-                message.append("<table class=\"cmd-table\" style=\"width: 100%; border-collapse: collapse;\">");
-                message.append(categoryBuilder.toString());
-                message.append("</table>");
-                message.append("</div>");
+                StringBuilder categoryBlock = new StringBuilder();
+                categoryBlock.append("<div class=\"cmd-category-block\" data-category=\"").append(rankName).append("\" style=\"margin-bottom: 12px;\">");
+                categoryBlock.append("<div class=\"cmd-cat-title\" style=\"margin-top: 8px; margin-bottom: 4px; font-weight: bold; color: #1e293b; background: rgba(0,0,0,0.06); padding: 4px 8px; border-radius: 4px;\">");
+                categoryBlock.append("Categoría: ").append(rankName);
+                categoryBlock.append("</div>");
+                categoryBlock.append("<table class=\"cmd-table\" style=\"width: 100%; border-collapse: collapse;\">");
+                categoryBlock.append(categoryBuilder.toString());
+                categoryBlock.append("</table>");
+                categoryBlock.append("</div>");
+                messageList.add(categoryBlock.toString());
             }
         }
 
-        gameClient.getHabbo().alert(new String[]{message.toString()});
+        gameClient.sendResponse(new com.eu.habbo.messages.outgoing.generic.alerts.MessagesForYouComposer(messageList));
 
         return true;
     }
