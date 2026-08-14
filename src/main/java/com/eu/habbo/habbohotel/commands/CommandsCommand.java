@@ -19,14 +19,18 @@ public class CommandsCommand extends Command {
         java.util.TreeMap<Integer, java.util.List<Command>> categorized = new java.util.TreeMap<>();
 
         for (Command c : commands) {
-            int minRank = 1;
-            // Buscar el rango mínimo que tiene este permiso habilitado
-            for (int r = 1; r <= 15; r++) {
-                if (Emulator.getGameEnvironment().getPermissionsManager().rankExists(r)) {
-                    com.eu.habbo.habbohotel.permissions.Permission p = Emulator.getGameEnvironment().getPermissionsManager().getRank(r).getPermissions().get(c.permission);
-                    if (p != null && p.setting != com.eu.habbo.habbohotel.permissions.PermissionSetting.DISALLOWED) {
-                        minRank = r;
-                        break;
+            int minRank = gameClient.getHabbo().getHabboInfo().getRank().getId();
+            if (c.permission == null) {
+                minRank = 1;
+            } else {
+                // Buscar el rango mínimo que tiene este permiso habilitado
+                for (int r = 1; r <= 20; r++) {
+                    if (Emulator.getGameEnvironment().getPermissionsManager().rankExists(r)) {
+                        com.eu.habbo.habbohotel.permissions.Permission p = Emulator.getGameEnvironment().getPermissionsManager().getRank(r).getPermissions().get(c.permission);
+                        if (p != null && p.setting != com.eu.habbo.habbohotel.permissions.PermissionSetting.DISALLOWED) {
+                            minRank = r;
+                            break;
+                        }
                     }
                 }
             }
