@@ -365,10 +365,16 @@ public class CatalogManager {
                     item = new CatalogItem(set);
                     page.addItem(item);
 
-                    if (item.getOfferId() != -1) {
-                        page.addOfferId(item.getOfferId());
+                    int offerId = (item.getOfferId() != -1) ? item.getOfferId() : item.getId();
+                    page.addOfferId(offerId);
+                    if (offerId != item.getId()) {
+                        page.addOfferId(item.getId());
+                    }
 
-                        this.offerDefs.put(item.getOfferId(), item.getId());
+                    this.offerDefs.put(offerId, item.getId());
+                    this.offerDefs.put(item.getId(), item.getId());
+                    for (com.eu.habbo.habbohotel.items.Item baseItem : item.getBaseItems()) {
+                        this.offerDefs.put(baseItem.getSpriteId(), item.getId());
                     }
                 } else
                     item.update(set);

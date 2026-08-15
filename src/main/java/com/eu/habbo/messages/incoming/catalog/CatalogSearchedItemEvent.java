@@ -12,24 +12,14 @@ public class CatalogSearchedItemEvent extends MessageHandler {
     public void handle() throws Exception {
         int offerId = this.packet.readInt();
 
-        int pageId = Emulator.getGameEnvironment().getCatalogManager().offerDefs.get(offerId);
+        int itemId = Emulator.getGameEnvironment().getCatalogManager().offerDefs.get(offerId);
 
-        if (pageId != 0) {
-            CatalogPage page = Emulator.getGameEnvironment().getCatalogManager().getCatalogPage(Emulator.getGameEnvironment().getCatalogManager().getCatalogItem(pageId).getPageId());
+        if (itemId != 0) {
+            CatalogItem item = Emulator.getGameEnvironment().getCatalogManager().getCatalogItem(itemId);
 
-            if (page != null) {
-                TIntObjectIterator<CatalogItem> iterator = page.getCatalogItems().iterator();
-
-                while (iterator.hasNext()) {
-                    iterator.advance();
-
-                    CatalogItem item = iterator.value();
-
-                    if (item.getOfferId() == offerId) {
-                        this.client.sendResponse(new CatalogSearchResultComposer(item));
-                        return;
-                    }
-                }
+            if (item != null) {
+                this.client.sendResponse(new CatalogSearchResultComposer(item));
+                return;
             }
         }
     }
