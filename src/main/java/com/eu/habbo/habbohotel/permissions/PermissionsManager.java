@@ -20,12 +20,14 @@ public class PermissionsManager {
     private final TIntObjectHashMap<Rank> ranks;
     private final TIntIntHashMap enables;
     private final THashMap<String, List<Rank>> badges;
+    private final TIntObjectHashMap<THashMap<String, Boolean>> userPermissions;
 
     public PermissionsManager() {
         long millis = System.currentTimeMillis();
         this.ranks = new TIntObjectHashMap<>();
         this.enables = new TIntIntHashMap();
         this.badges = new THashMap<String, List<Rank>>();
+        this.userPermissions = new TIntObjectHashMap<>();
 
         this.reload();
 
@@ -34,7 +36,38 @@ public class PermissionsManager {
 
     public void reload() {
         this.loadPermissions();
+        this.loadUserPermissions();
         this.loadEnables();
+    }
+
+    public void reloadUserPermissions() {
+        this.loadUserPermissions();
+    }
+
+    private void loadUserPermissions() {
+        synchronized (this.userPermissions) {
+            this.userPermissions.clear();
+
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users_permissions")) {
+                try (ResultSet set = statement.executeQuery()) {
+                    while (set.next()) {
+                        int userId = set.getInt("user_id");
+                        String permission = set.getString("permission");
+                        boolean value = set.getBoolean("value");
+
+                        THashMap<String, Boolean> userMap = this.userPermissions.get(userId);
+                        if (userMap == null) {
+                            userMap = new THashMap<>();
+                            this.userPermissions.put(userId, userMap);
+                        }
+
+                        userMap.put(permission, value);
+                    }
+                }
+            } catch (SQLException e) {
+                LOGGER.error("Caught SQL exception", e);
+            }
+        }
     }
 
     private void loadPermissions() {
@@ -112,6 +145,19 @@ public class PermissionsManager {
 
 
     public boolean hasPermission(Habbo habbo, String permission, boolean withRoomRights) {
+        Boolean userOverride = null;
+
+        synchronized (this.userPermissions) {
+            THashMap<String, Boolean> userMap = this.userPermissions.get(habbo.getHabboInfo().getId());
+            if (userMap != null && userMap.containsKey(permission)) {
+                userOverride = userMap.get(permission);
+            }
+        }
+
+        if (userOverride != null) {
+            return userOverride;
+        }
+
         if (!this.hasPermission(habbo.getHabboInfo().getRank(), permission, withRoomRights)) {
             for (HabboPlugin plugin : Emulator.getPluginManager().getPlugins()) {
                 if (plugin.hasPermission(habbo, permission)) {
