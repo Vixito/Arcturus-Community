@@ -2,8 +2,8 @@ package com.eu.habbo.messages.incoming.gamecenter;
 
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.gamecenter.GameCenterAchievementsConfigurationComposer;
+import com.eu.habbo.messages.outgoing.gamecenter.SnowStormLoadGameURLComposer;
 import com.eu.habbo.messages.outgoing.gamecenter.basejump.BaseJumpJoinQueueComposer;
-import com.eu.habbo.messages.outgoing.gamecenter.basejump.BaseJumpLoadGameComposer;
 import com.eu.habbo.messages.outgoing.gamecenter.basejump.BaseJumpLoadGameURLComposer;
 
 public class GameCenterJoinGameEvent extends MessageHandler {
@@ -11,16 +11,21 @@ public class GameCenterJoinGameEvent extends MessageHandler {
     public void handle() throws Exception {
         int gameId = this.packet.readInt();
 
-        if (gameId == 3) //BaseJump
+        if (gameId == 0) // SnowStorm
+        {
+            this.client.sendResponse(new SnowStormLoadGameURLComposer());
+        } else if (gameId == 3) // Fast Food (BaseJump)
         {
             this.client.sendResponse(new GameCenterAchievementsConfigurationComposer());
-            this.client.sendResponse(new BaseJumpLoadGameURLComposer());
-            this.client.sendResponse(new BaseJumpLoadGameComposer(this.client, 3));
-        } else if (gameId == 4) {
+            this.client.sendResponse(new BaseJumpLoadGameURLComposer(3, "/game/games/basejump/index.html"));
+        } else if (gameId == 4) // SlotCar
+        {
             this.client.sendResponse(new BaseJumpJoinQueueComposer(gameId));
-            this.client.sendResponse(new BaseJumpLoadGameURLComposer());
-        } else if (gameId == 0) {
-            this.client.sendResponse(new com.eu.habbo.messages.outgoing.gamecenter.SnowStormLoadGameURLComposer());
+            this.client.sendResponse(new BaseJumpLoadGameURLComposer(4, "/game/games/slotcar/index.html"));
+        } else if (gameId == 5) // Battle Ball
+        {
+            this.client.sendResponse(new BaseJumpJoinQueueComposer(gameId));
+            this.client.sendResponse(new BaseJumpLoadGameURLComposer(5, "/game/games/battleball/index.html"));
         }
     }
 }
