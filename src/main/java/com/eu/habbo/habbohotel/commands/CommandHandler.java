@@ -203,6 +203,7 @@ public class CommandHandler {
         addCommand(new FacelessCommand());
         addCommand(new FastwalkCommand());
         addCommand(new FilterWordCommand());
+        addCommand(new FloorPlanCommand());
         addCommand(new FreezeBotsCommand());
         addCommand(new FreezeCommand());
         addCommand(new GiftCommand());
