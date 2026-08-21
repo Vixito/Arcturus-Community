@@ -16,6 +16,7 @@ public class GuideManager {
     private final THashSet<GuideTour> activeTours;
     private final THashSet<GuardianTicket> activeTickets;
     private final THashSet<GuardianTicket> closedTickets;
+    private final THashMap<Habbo, Boolean> activeTourGuides;
     private final THashMap<Habbo, Boolean> activeHelpers;
     private final THashMap<Habbo, GuardianTicket> activeGuardians;
     private final THashMap<Integer, Integer> tourRequestTiming;
@@ -24,6 +25,7 @@ public class GuideManager {
         this.activeTours = new THashSet<>();
         this.activeTickets = new THashSet<>();
         this.closedTickets = new THashSet<>();
+        this.activeTourGuides = new THashMap<>();
         this.activeHelpers = new THashMap<>();
         this.activeGuardians = new THashMap<>();
         this.tourRequestTiming = new THashMap<>();
@@ -36,6 +38,7 @@ public class GuideManager {
             this.endSession(tour);
         }
 
+        this.activeTourGuides.remove(habbo);
         this.activeHelpers.remove(habbo);
 
         GuardianTicket ticket = this.getTicketForGuardian(habbo);
@@ -45,6 +48,20 @@ public class GuideManager {
         }
 
         this.activeGuardians.remove(habbo);
+    }
+
+
+    public void setOnTourGuide(Habbo habbo, boolean onDuty) {
+        if (onDuty) {
+            this.activeTourGuides.put(habbo, false);
+        } else {
+            GuideTour tour = this.getGuideTourByHabbo(habbo);
+
+            if (tour != null)
+                return;
+
+            this.activeTourGuides.remove(habbo);
+        }
     }
 
 
@@ -65,6 +82,21 @@ public class GuideManager {
     public boolean findHelper(GuideTour tour) {
         synchronized (this.activeHelpers) {
             for (Map.Entry<Habbo, Boolean> set : this.activeHelpers.entrySet()) {
+                if (!set.getValue()) {
+                    if (!tour.hasDeclined(set.getKey().getHabboInfo().getId())) {
+                        tour.checkSum++;
+                        tour.setHelper(set.getKey());
+                        set.getKey().getClient().sendResponse(new GuideSessionAttachedComposer(tour, true));
+                        tour.getNoob().getClient().sendResponse(new GuideSessionAttachedComposer(tour, false));
+                        Emulator.getThreading().run(new GuideFindNewHelper(tour, set.getKey()), 60000);
+                        this.activeTours.add(tour);
+                        return true;
+                    }
+                }
+            }
+        }
+        synchronized (this.activeTourGuides) {
+            for (Map.Entry<Habbo, Boolean> set : this.activeTourGuides.entrySet()) {
                 if (!set.getValue()) {
                     if (!tour.hasDeclined(set.getKey().getHabboInfo().getId())) {
                         tour.checkSum++;
@@ -101,30 +133,44 @@ public class GuideManager {
     public void startSession(GuideTour tour, Habbo helper) {
         synchronized (this.activeTours) {
             synchronized (this.activeHelpers) {
-                this.activeHelpers.put(helper, true);
-
-                ServerMessage message = new GuideSessionStartedComposer(tour).compose();
-                tour.getNoob().getClient().sendResponse(message);
-                tour.getHelper().getClient().sendResponse(message);
-                tour.checkSum++;
-                this.tourRequestTiming.put(tour.getStartTime(), Emulator.getIntUnixTimestamp());
+                if (this.activeHelpers.containsKey(helper)) {
+                    this.activeHelpers.put(helper, true);
+                }
             }
+            synchronized (this.activeTourGuides) {
+                if (this.activeTourGuides.containsKey(helper)) {
+                    this.activeTourGuides.put(helper, true);
+                }
+            }
+
+            ServerMessage message = new GuideSessionStartedComposer(tour).compose();
+            tour.getNoob().getClient().sendResponse(message);
+            tour.getHelper().getClient().sendResponse(message);
+            tour.checkSum++;
+            this.tourRequestTiming.put(tour.getStartTime(), Emulator.getIntUnixTimestamp());
         }
     }
 
 
     public void endSession(GuideTour tour) {
         synchronized (this.activeTours) {
-            synchronized (this.activeHelpers) {
-                tour.getNoob().getClient().sendResponse(new GuideSessionEndedComposer(GuideSessionEndedComposer.HELP_CASE_CLOSED));
-                tour.end();
+            tour.getNoob().getClient().sendResponse(new GuideSessionEndedComposer(GuideSessionEndedComposer.HELP_CASE_CLOSED));
+            tour.end();
 
-                if (tour.getHelper() != null) {
-                    this.activeHelpers.put(tour.getHelper(), false);
-                    tour.getHelper().getClient().sendResponse(new GuideSessionEndedComposer(GuideSessionEndedComposer.HELP_CASE_CLOSED));
-                    tour.getHelper().getClient().sendResponse(new GuideSessionDetachedComposer());
-                    tour.getHelper().getClient().sendResponse(new GuideToolsComposer(true));
+            if (tour.getHelper() != null) {
+                synchronized (this.activeHelpers) {
+                    if (this.activeHelpers.containsKey(tour.getHelper())) {
+                        this.activeHelpers.put(tour.getHelper(), false);
+                    }
                 }
+                synchronized (this.activeTourGuides) {
+                    if (this.activeTourGuides.containsKey(tour.getHelper())) {
+                        this.activeTourGuides.put(tour.getHelper(), false);
+                    }
+                }
+                tour.getHelper().getClient().sendResponse(new GuideSessionEndedComposer(GuideSessionEndedComposer.HELP_CASE_CLOSED));
+                tour.getHelper().getClient().sendResponse(new GuideSessionDetachedComposer());
+                tour.getHelper().getClient().sendResponse(new GuideToolsComposer(true));
             }
         }
     }
@@ -177,6 +223,11 @@ public class GuideManager {
         }
 
         return null;
+    }
+
+
+    public int getTourGuidesCount() {
+        return this.activeTourGuides.size();
     }
 
 

@@ -18,22 +18,36 @@ public class RequestGuideToolEvent extends MessageHandler {
             if (!this.client.getHabbo().hasPermission(Permission.ACC_HELPER_USE_GUIDE_TOOL))
                 return;
 
+            if (tourRequests && !this.client.getHabbo().hasPermission(Permission.ACC_HELPER_GIVE_GUIDE_TOURS))
+                tourRequests = false;
+
             if (helperRequests && !this.client.getHabbo().hasPermission(Permission.ACC_HELPER_GIVE_GUIDE_TOURS))
                 helperRequests = false;
 
             if (bullyReports && !this.client.getHabbo().hasPermission(Permission.ACC_HELPER_JUDGE_CHAT_REVIEWS))
                 bullyReports = false;
 
+            if (tourRequests) {
+                Emulator.getGameEnvironment().getGuideManager().setOnTourGuide(this.client.getHabbo(), onDuty);
+            } else {
+                Emulator.getGameEnvironment().getGuideManager().setOnTourGuide(this.client.getHabbo(), false);
+            }
+
             if (helperRequests) {
                 Emulator.getGameEnvironment().getGuideManager().setOnGuide(this.client.getHabbo(), onDuty);
+            } else {
+                Emulator.getGameEnvironment().getGuideManager().setOnGuide(this.client.getHabbo(), false);
             }
 
             if (bullyReports) {
                 Emulator.getGameEnvironment().getGuideManager().setOnGuardian(this.client.getHabbo(), onDuty);
+            } else {
+                Emulator.getGameEnvironment().getGuideManager().setOnGuardian(this.client.getHabbo(), false);
             }
 
             this.client.sendResponse(new GuideToolsComposer(onDuty));
         } else {
+            Emulator.getGameEnvironment().getGuideManager().setOnTourGuide(this.client.getHabbo(), onDuty);
             Emulator.getGameEnvironment().getGuideManager().setOnGuide(this.client.getHabbo(), onDuty);
             Emulator.getGameEnvironment().getGuideManager().setOnGuardian(this.client.getHabbo(), onDuty);
             this.client.sendResponse(new GuideToolsComposer(onDuty));
