@@ -16,7 +16,8 @@ public class SetMaxCommand extends Command {
             try {
                 max = Integer.valueOf(params[1]);
             } catch (Exception e) {
-                return false;
+                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_setmax.invalid_number"), RoomChatMessageBubbles.ALERT);
+                return true;
             }
 
             if (max > 0 && max < 9999) {

@@ -81,6 +81,7 @@ public class MassGiftCommand extends Command {
             return true;
         }
 
-        return false;
+        gameClient.getHabbo().whisper("Uso incorrecto: :massgift <id_item> [mensaje]", RoomChatMessageBubbles.ALERT);
+        return true;
     }
 }

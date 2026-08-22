@@ -66,6 +66,7 @@ public class RoomGiftCommand extends Command {
             return true;
         }
 
-        return false;
+        gameClient.getHabbo().whisper("Uso incorrecto: :roomgift <id_item> [mensaje]", RoomChatMessageBubbles.ALERT);
+        return true;
     }
 }

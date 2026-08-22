@@ -12,6 +12,11 @@ public class SetSpeedCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
+        if (params.length < 2) {
+            gameClient.getHabbo().whisper("Uso incorrecto: :setspeed <velocidad 0-10>", RoomChatMessageBubbles.ALERT);
+            return true;
+        }
+
         if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
             if (gameClient.getHabbo().getHabboInfo().getCurrentRoom().hasRights(gameClient.getHabbo())) {
                 Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
@@ -35,8 +40,11 @@ public class SetSpeedCommand extends Command {
 
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_setspeed").replace("%oldspeed%", oldSpeed + "").replace("%newspeed%", newSpeed + ""), RoomChatMessageBubbles.ALERT);
                 return true;
+            } else {
+                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.generic.no_rights", "No tienes derechos en esta sala."), RoomChatMessageBubbles.ALERT);
+                return true;
             }
         }
-        return false;
+        return true;
     }
 }

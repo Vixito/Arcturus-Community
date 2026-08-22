@@ -10,6 +10,7 @@ import com.eu.habbo.habbohotel.pets.PetCommand;
 import com.eu.habbo.habbohotel.pets.PetVocalsType;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.rooms.RoomRightLevels;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserTypingComposer;
 import com.eu.habbo.plugin.events.users.UserCommandEvent;
@@ -114,6 +115,9 @@ public class CommandHandler {
                                     if (gameClient.getHabbo().getHabboInfo().getRank().isLogCommands()) {
                                         Emulator.getDatabaseLogger().store(new CommandLog(gameClient.getHabbo().getHabboInfo().getId(), command, commandLine, succes));
                                     }
+                                } else {
+                                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.generic.no_permission", "No tienes permisos suficientes para usar este comando."), RoomChatMessageBubbles.ALERT);
+                                    return true;
                                 }
 
                                 return succes;
