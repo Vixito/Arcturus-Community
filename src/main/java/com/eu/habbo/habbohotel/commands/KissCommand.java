@@ -17,7 +17,7 @@ import com.eu.habbo.core.RedisPublisher;
 
 public class KissCommand extends Command {
     public KissCommand() {
-        super("cmd_sit", new String[]{"besar", "kiss", "beso"});
+        super(null, new String[]{"besar", "beso", "kiss"});
     }
 
     @Override

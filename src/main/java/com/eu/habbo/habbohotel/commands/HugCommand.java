@@ -17,7 +17,7 @@ import com.eu.habbo.core.RedisPublisher;
 
 public class HugCommand extends Command {
     public HugCommand() {
-        super("cmd_sit", new String[]{"abrazar", "hug", "abrazo"});
+        super(null, new String[]{"abrazar", "abrazo", "hug"});
     }
 
     @Override

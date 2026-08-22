@@ -55,9 +55,20 @@ public class CommandsCommand extends Command {
                 if (description == null || description.isEmpty() || description.equals("Sin descripción")) {
                     if (c.keys != null && c.keys.length > 0) {
                         String key = c.keys[0].toLowerCase();
-                        if (key.equals("kiss") || key.equals("beso")) description = "Besa a otro usuario.";
-                        else if (key.equals("hug") || key.equals("abrazo")) description = "Abraza a otro usuario.";
-                        else if (key.equals("test")) description = "Ejecuta un diagnóstico del emulador: sala, usuarios y uso de memoria RAM. Uso: :test";
+                        if (key.equals("kiss") || key.equals("beso") || key.equals("besar")) description = "Besa a otro usuario cercano. Uso: :besar [usuario]";
+                        else if (key.equals("hug") || key.equals("abrazo") || key.equals("abrazar")) description = "Abraza a otro usuario cercano. Uso: :abrazar [usuario]";
+                        else if (key.equals("slap") || key.equals("bofetada") || key.equals("cachetada")) description = "Le da una bofetada a un usuario cercano. Uso: :slap [usuario]";
+                        else if (key.equals("kill") || key.equals("matar")) description = "Derrota a un usuario y lo tumba al suelo. Uso: :kill [usuario]";
+                        else if (key.equals("clap") || key.equals("aplaudir")) description = "Realiza una animación de aplausos. Uso: :clap / :aplaudir";
+                        else if (key.equals("setmax")) description = "Cambia el límite de usuarios de tu sala. (Requiere derechos) Uso: :setmax [número]";
+                        else if (key.equals("setspeed")) description = "Ajusta la velocidad de los rollers en tu sala. (Requiere derechos) Uso: :setspeed [0-4]";
+                        else if (key.equals("hidewired")) description = "Oculta o muestra los wireds en tu sala. (Requiere derechos)";
+                        else if (key.equals("reload") || key.equals("reload_room")) description = "Recarga la sala actual. (Requiere derechos)";
+                        else if (key.equals("pickall")) description = "Recoge todos tus furnis en la sala. (Requiere ser dueño)";
+                        else if (key.equals("ejectall")) description = "Expulsa los furnis de otros en tu sala. (Requiere ser dueño)";
+                        else if (key.equals("diagonal")) description = "Activa/desactiva caminar en diagonal en tu sala. (Requiere derechos)";
+                        else if (key.equals("freeze_bots")) description = "Congela o descongela los bots de la sala. (Requiere derechos)";
+                        else if (key.equals("test")) description = "Ejecuta un diagnóstico del emulador: sala, usuarios y memoria RAM. Uso: :test";
                         else if (key.equals("warp")) description = "Teletransporta a un usuario a tu posición.";
                         else if (key.equals("wordquiz")) description = "Inicia un quiz de preguntas en la sala.";
                         else description = "Ejecuta :" + key;

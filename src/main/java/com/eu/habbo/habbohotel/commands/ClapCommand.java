@@ -10,7 +10,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserTalkComposer;
 
 public class ClapCommand extends Command {
     public ClapCommand() {
-        super("cmd_sit", new String[]{"clap", "aplaudir"});
+        super(null, new String[]{"clap", "aplaudir"});
     }
 
     @Override

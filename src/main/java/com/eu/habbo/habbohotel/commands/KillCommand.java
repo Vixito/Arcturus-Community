@@ -9,7 +9,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserTalkComposer;
 
 public class KillCommand extends Command {
     public KillCommand() {
-        super("cmd_sit", new String[]{"kill", "matar"});
+        super(null, new String[]{"kill", "matar"});
     }
 
     @Override

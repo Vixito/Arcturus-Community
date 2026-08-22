@@ -11,7 +11,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserTalkComposer;
 
 public class SlapCommand extends Command {
     public SlapCommand() {
-        super("cmd_sit", new String[]{"slap", "bofetada", "cachetada", "abofetear"});
+        super(null, new String[]{"slap", "bofetada", "cachetada", "abofetear"});
     }
 
     @Override
