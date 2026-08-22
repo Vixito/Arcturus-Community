@@ -717,6 +717,7 @@ public class RoomManager {
 
         habbo.getRoomUnit().setInvisible(false);
         room.addHabbo(habbo);
+        Emulator.getGameEnvironment().getBattlePassManager().progress(habbo, "room_visit");
 
         List<Habbo> habbos = new ArrayList<>();
         if (!room.getCurrentHabbos().isEmpty()) {

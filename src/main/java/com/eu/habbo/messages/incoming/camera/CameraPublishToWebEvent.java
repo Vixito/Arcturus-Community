@@ -54,6 +54,7 @@ public class CameraPublishToWebEvent extends MessageHandler {
                     this.client.getHabbo().givePoints(CameraPublishToWebEvent.CAMERA_PUBLISH_POINTS_TYPE, -CameraPublishToWebEvent.CAMERA_PUBLISH_POINTS);
 
                     isOk = true;
+                    Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "camera_publish");
                 } catch (SQLException e) {
                     LOGGER.error("Caught SQL exception", e);
                 }

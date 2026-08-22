@@ -56,6 +56,7 @@ public class GameEnvironment {
     private PollManager pollManager;
     private SubscriptionManager subscriptionManager;
     private CalendarManager calendarManager;
+    private com.eu.habbo.habbohotel.battlepass.BattlePassManager battlePassManager;
 
     public void load() throws Exception {
         LOGGER.info("GameEnvironment -> Loading...");
@@ -81,6 +82,7 @@ public class GameEnvironment {
         this.craftingManager = new CraftingManager();
         this.pollManager = new PollManager();
         this.calendarManager = new CalendarManager();
+        this.battlePassManager = new com.eu.habbo.habbohotel.battlepass.BattlePassManager();
 
         this.roomManager.loadPublicRooms();
         this.navigatorManager.loadNavigator();
@@ -212,4 +214,5 @@ public class GameEnvironment {
     }
 
     public CalendarManager getCalendarManager() { return this.calendarManager; }
+    public com.eu.habbo.habbohotel.battlepass.BattlePassManager getBattlePassManager() { return this.battlePassManager; }
 }

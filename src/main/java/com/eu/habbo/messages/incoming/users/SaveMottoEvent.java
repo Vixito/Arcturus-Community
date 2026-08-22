@@ -26,5 +26,6 @@ public class SaveMottoEvent extends MessageHandler {
         }
 
         AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("Motto"));
+        Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "habbo_motto");
     }
 }

@@ -106,6 +106,7 @@ public class RequestGuildBuyEvent extends MessageHandler {
                     Emulator.getPluginManager().fireEvent(new GuildPurchasedEvent(guild, this.client.getHabbo()));
 
                     Emulator.getGameEnvironment().getGuildManager().addGuild(guild);
+                    Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "habbo_buy_group");
                 }
             } else {
                 String message = Emulator.getTexts().getValue("scripter.warning.guild.buy.owner").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%roomname%", r.getName().replace("%owner%", r.getOwnerName()));

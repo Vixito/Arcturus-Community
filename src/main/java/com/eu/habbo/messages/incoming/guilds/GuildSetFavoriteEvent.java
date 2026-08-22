@@ -32,6 +32,7 @@ public class GuildSetFavoriteEvent extends MessageHandler {
             }
 
             this.client.sendResponse(new UserProfileComposer(this.client.getHabbo(), this.client));
+            Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "habbo_set_favorite_group");
         }
     }
 }

@@ -16,5 +16,6 @@ public class SaveUserVolumesEvent extends MessageHandler {
         this.client.getHabbo().getHabboStats().volumeTrax = trax;
 
         Emulator.getPluginManager().fireEvent(new UserSavedSettingsEvent(this.client.getHabbo()));
+        Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "habbo_change_setting");
     }
 }

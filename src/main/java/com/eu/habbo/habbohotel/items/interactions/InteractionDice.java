@@ -62,6 +62,7 @@ public class InteractionDice extends HabboItem {
                     } else {
                         Emulator.getThreading().run(new RandomDiceNumber(this, room, this.getBaseItem().getStateCount()), 1500);
                     }
+                    Emulator.getGameEnvironment().getBattlePassManager().progress(client.getHabbo(), "habbo_dice");
                 }
             }
         }

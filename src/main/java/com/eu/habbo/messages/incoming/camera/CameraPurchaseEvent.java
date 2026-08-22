@@ -52,6 +52,7 @@ public class CameraPurchaseEvent extends MessageHandler {
             this.client.getHabbo().givePoints(CameraPurchaseEvent.CAMERA_PURCHASE_POINTS_TYPE, -CameraPurchaseEvent.CAMERA_PURCHASE_POINTS);
 
             AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("CameraPhotoCount"));
+            Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "camera_purchase");
         }
     }
 }

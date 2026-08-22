@@ -206,6 +206,7 @@ public class SecureLoginEvent extends MessageHandler {
                 SubscriptionHabboClub.processClubBadge(habbo);
 
                 Messenger.checkFriendSizeProgress(habbo);
+                Emulator.getGameEnvironment().getBattlePassManager().progress(habbo, "habbo_login");
 
                 if (!habbo.getHabboStats().hasGottenDefaultSavedSearches) {
                     habbo.getHabboStats().hasGottenDefaultSavedSearches = true;

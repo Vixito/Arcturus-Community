@@ -128,6 +128,7 @@ public class RoomSettingsSaveEvent extends MessageHandler {
                 room.sendComposer(new RoomChatSettingsComposer(room).compose());
                 room.sendComposer(new RoomSettingsUpdatedComposer(room).compose());
                 this.client.sendResponse(new RoomSettingsSavedComposer(room));
+                Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "room_save_settings");
                 //TODO Find packet for update room name.
             }
         }

@@ -59,6 +59,7 @@ public class RequestCreateRoomEvent extends MessageHandler {
 
         if (room != null) {
             this.client.sendResponse(new RoomCreatedComposer(room));
+            Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "room_create");
         }
     }
 }

@@ -261,6 +261,9 @@ public class RoomTrade {
 
         userOne.getHabbo().getClient().sendResponse(new InventoryRefreshComposer());
         userTwo.getHabbo().getClient().sendResponse(new InventoryRefreshComposer());
+
+        Emulator.getGameEnvironment().getBattlePassManager().progress(userOne.getHabbo(), "habbo_trade");
+        Emulator.getGameEnvironment().getBattlePassManager().progress(userTwo.getHabbo(), "habbo_trade");
         return true;
     }
 

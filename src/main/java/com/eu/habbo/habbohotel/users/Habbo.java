@@ -475,6 +475,7 @@ public class Habbo implements Runnable {
             this.client.getHabbo().getHabboInfo().getCurrentRoom().dance(this.client.getHabbo().getRoomUnit(), DanceType.NONE);
 
             RedisPublisher.getInstance().notifyLeaderboardUpdate();
+            Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "habbo_respect");
         }
     }
 

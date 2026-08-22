@@ -32,5 +32,6 @@ public class FriendPrivateMessageEvent extends MessageHandler {
             return;
 
         buddy.onMessageReceived(this.client.getHabbo(), message);
+        Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "habbo_menssenger");
     }
 }

@@ -94,6 +94,19 @@ public class CommandHandler {
                                         Emulator.getPluginManager().fireEvent(event);
 
                                         succes = event.succes;
+                                        if (succes) {
+                                            if (command instanceof KissCommand) {
+                                                Emulator.getGameEnvironment().getBattlePassManager().progress(gameClient.getHabbo(), "habbo_command_kiss");
+                                            } else if (command instanceof HugCommand) {
+                                                Emulator.getGameEnvironment().getBattlePassManager().progress(gameClient.getHabbo(), "habbo_command_hug");
+                                            } else if (command instanceof SlapCommand) {
+                                                Emulator.getGameEnvironment().getBattlePassManager().progress(gameClient.getHabbo(), "habbo_command_slap");
+                                            } else if (command instanceof KillCommand) {
+                                                Emulator.getGameEnvironment().getBattlePassManager().progress(gameClient.getHabbo(), "habbo_command_kill");
+                                            } else if (command instanceof EmptyInventoryCommand) {
+                                                Emulator.getGameEnvironment().getBattlePassManager().progress(gameClient.getHabbo(), "habbo_command_empty");
+                                            }
+                                        }
                                     } catch (Exception e) {
                                         LOGGER.error("Caught exception", e);
                                     }

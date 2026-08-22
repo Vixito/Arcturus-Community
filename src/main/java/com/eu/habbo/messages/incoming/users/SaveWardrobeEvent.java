@@ -30,5 +30,6 @@ public class SaveWardrobeEvent extends MessageHandler {
         Emulator.getPluginManager().fireEvent(wardrobeEvent);
 
         Emulator.getThreading().run(wardrobeItem);
+        Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "habbo_save_wardrobe");
     }
 }

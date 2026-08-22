@@ -33,6 +33,10 @@ public class RoomUserTalkEvent extends MessageHandler {
             room.talk(this.client.getHabbo(), message, RoomChatType.TALK);
 
             if (!message.isCommand) {
+                Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "habbo_talk");
+                if (message.getMessage().contains("o/") || message.getMessage().contains("♫") || message.getMessage().contains("♪")) {
+                    Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "habbo_sing");
+                }
                 if (RoomChatMessage.SAVE_ROOM_CHATS) {
                     Emulator.getThreading().run(message);
                 }

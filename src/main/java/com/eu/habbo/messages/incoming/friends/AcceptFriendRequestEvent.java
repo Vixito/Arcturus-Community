@@ -79,6 +79,8 @@ public class AcceptFriendRequestEvent extends MessageHandler {
 
             Messenger.checkFriendSizeProgress(this.client.getHabbo());
             Messenger.checkFriendSizeProgress(target);
+            Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "habbo_accept_friend");
+            Emulator.getGameEnvironment().getBattlePassManager().progress(target, "habbo_accept_friend");
         }
     }
 }

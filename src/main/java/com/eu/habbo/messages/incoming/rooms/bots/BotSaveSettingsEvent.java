@@ -51,6 +51,7 @@ public class BotSaveSettingsEvent extends MessageHandler {
                     bot.setGender(lookEvent.gender);
                     bot.setEffect(lookEvent.effect, -1);
                     bot.needsUpdate(true);
+                    Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "bot_look_settings");
                     break;
 
                 case 2:
@@ -114,6 +115,7 @@ public class BotSaveSettingsEvent extends MessageHandler {
                     bot.clearChat();
                     bot.addChatLines(chat);
                     bot.needsUpdate(true);
+                    Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "bot_chat_settings");
                     break;
 
                 case 3:
@@ -144,6 +146,7 @@ public class BotSaveSettingsEvent extends MessageHandler {
                             bot.setName(nameEvent.name);
                             bot.needsUpdate(true);
                             room.sendComposer(new RoomUserNameChangedComposer(bot.getRoomUnit().getId(), bot.getRoomUnit().getId(), nameEvent.name).compose());
+                            Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "bot_name_settings");
                         }
                     }
 

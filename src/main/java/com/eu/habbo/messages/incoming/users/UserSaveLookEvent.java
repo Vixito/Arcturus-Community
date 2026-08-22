@@ -45,5 +45,6 @@ public class UserSaveLookEvent extends MessageHandler {
         }
 
         AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("AvatarLooks"));
+        Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "habbo_look");
     }
 }

@@ -7,5 +7,6 @@ public class RoomVoteEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
         Emulator.getGameEnvironment().getRoomManager().voteForRoom(this.client.getHabbo(), this.client.getHabbo().getHabboInfo().getCurrentRoom());
+        Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "room_vote");
     }
 }

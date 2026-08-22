@@ -17,6 +17,7 @@ public class ChangeRelationEvent extends MessageHandler {
             if (!event.isCancelled()) {
                 buddy.setRelation(event.relationShip);
                 this.client.sendResponse(new UpdateFriendComposer(this.client.getHabbo(), buddy, 0));
+                com.eu.habbo.Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "habbo_change_relation");
             }
         }
     }

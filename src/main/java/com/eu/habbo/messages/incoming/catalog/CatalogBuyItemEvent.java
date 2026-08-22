@@ -234,6 +234,7 @@ public class CatalogBuyItemEvent extends MessageHandler {
                 }
 
             Emulator.getGameEnvironment().getCatalogManager().purchaseItem(page, item, this.client.getHabbo(), count, extraData, false);
+            Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "habbo_buy_catalog", count);
 
         } else {
             this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR).compose());
