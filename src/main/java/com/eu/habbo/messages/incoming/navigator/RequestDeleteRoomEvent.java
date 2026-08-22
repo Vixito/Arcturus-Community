@@ -108,6 +108,8 @@ public class RequestDeleteRoomEvent extends MessageHandler {
                         filter.setInt(1, roomId);
                         filter.execute();
                     }
+
+                    Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "room_delete");
                 } catch (SQLException e) {
                     LOGGER.error("Caught SQL exception", e);
                 }

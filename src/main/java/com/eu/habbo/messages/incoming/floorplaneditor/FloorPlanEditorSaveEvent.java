@@ -177,6 +177,8 @@ public class FloorPlanEditorSaveEvent extends MessageHandler {
                 for (Habbo habbo : habbos) {
                     habbo.getClient().sendResponse(message);
                 }
+
+                Emulator.getGameEnvironment().getBattlePassManager().progress(this.client.getHabbo(), "floor_save_edit");
             }
         }
     }
