@@ -11,7 +11,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserTalkComposer;
 
 public class SlapCommand extends Command {
     public SlapCommand() {
-        super(null, new String[]{"slap", "bofetada", "cachetada", "abofetear"});
+        super(null, new String[]{"slap"});
     }
 
     @Override
@@ -44,7 +44,7 @@ public class SlapCommand extends Command {
             room.sendComposer(new RoomUserActionComposer(gameClient.getHabbo().getRoomUnit(), RoomUserAction.WAVE).compose());
             room.sendComposer(new RoomUserTalkComposer(new RoomChatMessage("*Le da una bofetada a " + target.getHabboInfo().getUsername() + "*", gameClient.getHabbo(), RoomChatMessageBubbles.NORMAL)).compose());
         } else {
-            gameClient.getHabbo().whisper("Uso correcto: :slap [usuario] o :bofetada [usuario]", RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper("Uso correcto: :slap [usuario]", RoomChatMessageBubbles.ALERT);
         }
         return true;
     }

@@ -86,8 +86,8 @@ public class CommandHandler {
                                         }
 
                                         String[] eventParts = parts.clone();
-                                        if (command instanceof KissCommand) eventParts[0] = "besar";
-                                        else if (command instanceof HugCommand) eventParts[0] = "abrazar";
+                                        if (command instanceof KissCommand) eventParts[0] = "kiss";
+                                        else if (command instanceof HugCommand) eventParts[0] = "hug";
                                         else if (command instanceof SlapCommand) eventParts[0] = "slap";
                                         else if (command instanceof KillCommand) eventParts[0] = "kill";
 

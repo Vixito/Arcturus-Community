@@ -55,11 +55,11 @@ public class CommandsCommand extends Command {
                 if (description == null || description.isEmpty() || description.equals("Sin descripción")) {
                     if (c.keys != null && c.keys.length > 0) {
                         String key = c.keys[0].toLowerCase();
-                        if (key.equals("kiss") || key.equals("beso") || key.equals("besar")) description = "Besa a otro usuario cercano. Uso: :besar [usuario]";
-                        else if (key.equals("hug") || key.equals("abrazo") || key.equals("abrazar")) description = "Abraza a otro usuario cercano. Uso: :abrazar [usuario]";
-                        else if (key.equals("slap") || key.equals("bofetada") || key.equals("cachetada")) description = "Le da una bofetada a un usuario cercano. Uso: :slap [usuario]";
-                        else if (key.equals("kill") || key.equals("matar")) description = "Derrota a un usuario y lo tumba al suelo. Uso: :kill [usuario]";
-                        else if (key.equals("clap") || key.equals("aplaudir")) description = "Realiza una animación de aplausos. Uso: :clap / :aplaudir";
+                        if (key.equals("kiss")) description = "Besa a otro usuario cercano. Uso: :kiss [usuario]";
+                        else if (key.equals("hug")) description = "Abraza a otro usuario cercano. Uso: :hug [usuario]";
+                        else if (key.equals("slap")) description = "Le da una bofetada a un usuario cercano. Uso: :slap [usuario]";
+                        else if (key.equals("kill")) description = "Derrota a un usuario y lo tumba al suelo. Uso: :kill [usuario]";
+                        else if (key.equals("clap")) description = "Realiza una animación de aplausos. Uso: :clap";
                         else if (key.equals("setmax")) description = "Cambia el límite de usuarios de tu sala. (Requiere derechos) Uso: :setmax [número]";
                         else if (key.equals("setspeed")) description = "Ajusta la velocidad de los rollers en tu sala. (Requiere derechos) Uso: :setspeed [0-4]";
                         else if (key.equals("hidewired")) description = "Oculta o muestra los wireds en tu sala. (Requiere derechos)";

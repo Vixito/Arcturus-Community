@@ -9,7 +9,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserTalkComposer;
 
 public class KillCommand extends Command {
     public KillCommand() {
-        super(null, new String[]{"kill", "matar"});
+        super(null, new String[]{"kill"});
     }
 
     @Override
@@ -47,7 +47,7 @@ public class KillCommand extends Command {
 
             room.sendComposer(new RoomUserTalkComposer(new RoomChatMessage("*Ha derrotado a " + target.getHabboInfo().getUsername() + "*", gameClient.getHabbo(), RoomChatMessageBubbles.NORMAL)).compose());
         } else {
-            gameClient.getHabbo().whisper("Uso correcto: :kill [usuario] o :matar [usuario]", RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper("Uso correcto: :kill [usuario]", RoomChatMessageBubbles.ALERT);
         }
         return true;
     }

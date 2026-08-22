@@ -17,7 +17,7 @@ import com.eu.habbo.core.RedisPublisher;
 
 public class HugCommand extends Command {
     public HugCommand() {
-        super(null, new String[]{"abrazar", "abrazo", "hug"});
+        super(null, new String[]{"hug"});
     }
 
     @Override
@@ -64,7 +64,7 @@ public class HugCommand extends Command {
             room.sendComposer(new RoomUserTalkComposer(new RoomChatMessage("*Abraza a " + target.getHabboInfo().getUsername() + "*", gameClient.getHabbo(), RoomChatMessageBubbles.NORMAL)).compose());
             
         } else {
-            gameClient.getHabbo().whisper("Uso correcto: :abrazo [usuario]", RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper("Uso correcto: :hug [usuario]", RoomChatMessageBubbles.ALERT);
         }
         return true;
     }

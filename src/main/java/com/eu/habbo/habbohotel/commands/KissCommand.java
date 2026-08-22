@@ -17,7 +17,7 @@ import com.eu.habbo.core.RedisPublisher;
 
 public class KissCommand extends Command {
     public KissCommand() {
-        super(null, new String[]{"besar", "beso", "kiss"});
+        super(null, new String[]{"kiss"});
     }
 
     @Override
@@ -67,7 +67,7 @@ public class KissCommand extends Command {
             // room.sendComposer(new RoomUserActionComposer(target.getRoomUnit(), RoomUserAction.BLOW_KISS).compose());
             
         } else {
-            gameClient.getHabbo().whisper("Uso correcto: :beso [usuario]", RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper("Uso correcto: :kiss [usuario]", RoomChatMessageBubbles.ALERT);
         }
         return true;
     }
