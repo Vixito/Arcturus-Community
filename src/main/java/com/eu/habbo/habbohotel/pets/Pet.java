@@ -105,7 +105,7 @@ public class Pet implements ISerialize, Runnable {
 
 
     protected void say(String message) {
-        if (this.roomUnit != null && this.room != null && !message.isEmpty()) {
+        if (this.roomUnit != null && this.room != null && message != null && !message.isEmpty()) {
             RoomChatMessage chatMessage = new RoomChatMessage(message, this.roomUnit, RoomChatMessageBubbles.NORMAL);
             PetTalkEvent talkEvent = new PetTalkEvent(this, chatMessage);
             if (!Emulator.getPluginManager().fireEvent(talkEvent).isCancelled()) {
@@ -309,26 +309,36 @@ public class Pet implements ISerialize, Runnable {
                 this.randomActionTickTimeout = time + (10 * Emulator.getRandom().nextInt(60));
             }
 
-            if (!this.muted) {
+            if (!this.muted && this.task != PetTasks.NEST && this.task != PetTasks.SILENT) {
                 if (this.chatTimeout <= time) {
-                    if (this.energy <= 30) {
+                    if (this.energy <= 25) {
                         this.say(this.petData.randomVocal(PetVocalsType.TIRED));
                         if (this.energy <= 10)
                             this.findNest();
-                    } else if (this.happyness > 85) {
-                        this.say(this.petData.randomVocal(PetVocalsType.GENERIC_HAPPY));
-                    } else if (this.happyness < 15) {
-                        this.say(this.petData.randomVocal(PetVocalsType.GENERIC_SAD));
-                    } else if (this.levelHunger > 50) {
+                    } else if (this.levelHunger > 60) {
                         this.say(this.petData.randomVocal(PetVocalsType.HUNGRY));
                         this.eat();
-                    } else if (this.levelThirst > 50) {
+                    } else if (this.levelThirst > 60) {
                         this.say(this.petData.randomVocal(PetVocalsType.THIRSTY));
                         this.drink();
+                    } else if (this.happyness >= 60) {
+                        if (Emulator.getRandom().nextInt(2) == 0) {
+                            this.say(this.petData.randomVocal(PetVocalsType.GENERIC_HAPPY));
+                        } else {
+                            this.say(this.petData.randomVocal(PetVocalsType.PLAYFUL));
+                        }
+                    } else if (this.happyness <= 25) {
+                        this.say(this.petData.randomVocal(PetVocalsType.GENERIC_SAD));
+                    } else {
+                        if (Emulator.getRandom().nextInt(2) == 0) {
+                            this.say(this.petData.randomVocal(PetVocalsType.GENERIC_NEUTRAL));
+                        } else {
+                            this.say(this.petData.randomVocal(PetVocalsType.GENERIC_HAPPY));
+                        }
                     }
 
-                    int timeOut = Emulator.getRandom().nextInt(30);
-                    this.chatTimeout = time + (timeOut < 3 ? 30 : timeOut);
+                    int timeOut = 15 + Emulator.getRandom().nextInt(30);
+                    this.chatTimeout = time + timeOut;
                 }
             }
         }
