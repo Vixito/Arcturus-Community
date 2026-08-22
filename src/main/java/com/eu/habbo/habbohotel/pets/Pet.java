@@ -129,6 +129,8 @@ public class Pet implements ISerialize, Runnable {
 
         if (this.energy < 0)
             this.energy = 0;
+
+        this.needsUpdate = true;
     }
 
 
@@ -140,6 +142,8 @@ public class Pet implements ISerialize, Runnable {
 
         if (this.happyness < 0)
             this.happyness = 0;
+
+        this.needsUpdate = true;
     }
 
     public int getRespect() {
@@ -525,6 +529,7 @@ public class Pet implements ISerialize, Runnable {
 
     public void addExperience(int amount) {
         this.experience += amount;
+        this.needsUpdate = true;
 
         if (this.room != null) {
             this.room.sendComposer(new RoomPetExperienceComposer(this, amount).compose());
@@ -533,24 +538,27 @@ public class Pet implements ISerialize, Runnable {
                 this.levelUp();
             }
         }
+        Emulator.getThreading().run(this);
     }
 
 
     protected void levelUp() {
-            if (this.level >= PetManager.experiences.length + 1)
-                return;
+        if (this.level >= PetManager.experiences.length + 1)
+            return;
 
-            if (this.experience > PetManager.experiences[this.level - 1]) {
-                this.experience = PetManager.experiences[this.level - 1];
-            }
-            this.level++;
-            this.say(this.petData.randomVocal(PetVocalsType.LEVEL_UP));
-            this.addHappyness(100);
-            this.roomUnit.setStatus(RoomUnitStatus.GESTURE, "exp");
-            this.gestureTickTimeout = Emulator.getIntUnixTimestamp();
-            AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userId), Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetLevelUp"));
-            this.room.sendComposer(new PetLevelUpdatedComposer(this).compose());
+        if (this.experience > PetManager.experiences[this.level - 1]) {
+            this.experience = PetManager.experiences[this.level - 1];
         }
+        this.level++;
+        this.needsUpdate = true;
+        this.say(this.petData.randomVocal(PetVocalsType.LEVEL_UP));
+        this.addHappyness(100);
+        this.roomUnit.setStatus(RoomUnitStatus.GESTURE, "exp");
+        this.gestureTickTimeout = Emulator.getIntUnixTimestamp();
+        AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userId), Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetLevelUp"));
+        this.room.sendComposer(new PetLevelUpdatedComposer(this).compose());
+        Emulator.getThreading().run(this);
+    }
 
 
     public void addThirst(int amount) {
@@ -561,6 +569,8 @@ public class Pet implements ISerialize, Runnable {
 
         if (this.levelThirst < 0)
             this.levelThirst = 0;
+
+        this.needsUpdate = true;
     }
 
 
@@ -572,6 +582,8 @@ public class Pet implements ISerialize, Runnable {
 
         if (this.levelHunger < 0)
             this.levelHunger = 0;
+
+        this.needsUpdate = true;
     }
 
 

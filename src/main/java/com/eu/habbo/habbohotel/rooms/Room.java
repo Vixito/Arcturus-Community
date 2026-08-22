@@ -965,7 +965,18 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     }
 
                     this.currentBots.clear();
-                    this.currentPets.clear();
+
+                    synchronized (this.currentPets) {
+                        for (Pet pet : this.currentPets.valueCollection()) {
+                            try {
+                                pet.needsUpdate = true;
+                                pet.run();
+                            } catch (Exception e) {
+                                LOGGER.error("Caught exception saving pet on room dispose", e);
+                            }
+                        }
+                        this.currentPets.clear();
+                    }
                 } catch (Exception e) {
                     LOGGER.error("Caught exception", e);
                 }
