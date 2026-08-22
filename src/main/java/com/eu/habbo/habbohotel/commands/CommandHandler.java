@@ -164,14 +164,9 @@ public class CommandHandler {
                                         .trim();
 
                                 for (PetCommand command : pet.getPetData().getPetCommands()) {
-                                    if (command == null || command.key == null) continue;
-                                    String cmdKey = command.key;
-                                    String normalizedCmd = java.text.Normalizer.normalize(cmdKey, java.text.Normalizer.Form.NFD)
-                                            .replaceAll("\\p{M}", "")
-                                            .replaceAll("[^a-zA-Z0-9 ]", "")
-                                            .trim();
+                                    if (command == null) continue;
 
-                                    if (cmdKey.equalsIgnoreCase(inputKey) || normalizedCmd.equalsIgnoreCase(normalizedInput)) {
+                                    if (matchesPetCommand(command, inputKey, normalizedInput)) {
                                         if (pet instanceof RideablePet && ((RideablePet) pet).getRider() != null) {
                                             if (((RideablePet) pet).getRider().getHabboInfo().getId() == gameClient.getHabbo().getHabboInfo().getId()) {
                                                 ((RideablePet) pet).getRider().getHabboInfo().dismountPet();
@@ -362,6 +357,120 @@ public class CommandHandler {
         allowedCommands.sort(CommandHandler.ALPHABETICAL_ORDER);
 
         return allowedCommands;
+    }
+
+    public static boolean matchesPetCommand(PetCommand command, String inputKey, String normalizedInput) {
+        if (command == null) return false;
+
+        if (command.key != null) {
+            String cmdKey = command.key;
+            String normalizedCmd = java.text.Normalizer.normalize(cmdKey, java.text.Normalizer.Form.NFD)
+                    .replaceAll("\\p{M}", "")
+                    .replaceAll("[^a-zA-Z0-9 ]", "")
+                    .trim();
+
+            if (cmdKey.equalsIgnoreCase(inputKey) || normalizedCmd.equalsIgnoreCase(normalizedInput)) {
+                return true;
+            }
+        }
+
+        String nInput = normalizedInput.toLowerCase();
+        switch (command.id) {
+            case 0:
+                return nInput.equals("descansa") || nInput.equals("free") || nInput.equals("relax");
+            case 1:
+                return nInput.equals("sientate") || nInput.equals("sientese") || nInput.equals("sit");
+            case 2:
+                return nInput.equals("tumbate") || nInput.equals("acuestate") || nInput.equals("lay") || nInput.equals("down");
+            case 3:
+                return nInput.equals("ven aqui") || nInput.equals("aqui") || nInput.equals("here") || nInput.equals("come");
+            case 4:
+                return nInput.equals("pide") || nInput.equals("beg");
+            case 5:
+                return nInput.equals("haz el muerto") || nInput.equals("muerto") || nInput.equals("dead") || nInput.equals("play dead");
+            case 6:
+                return nInput.equals("quieto") || nInput.equals("stay") || nInput.equals("stop");
+            case 7:
+                return nInput.equals("sigueme") || nInput.equals("follow") || nInput.equals("follow me");
+            case 8:
+                return nInput.equals("de pie") || nInput.equals("levanta") || nInput.equals("levantate") || nInput.equals("stand") || nInput.equals("up");
+            case 9:
+                return nInput.equals("salta") || nInput.equals("jump");
+            case 10:
+                return nInput.equals("habla") || nInput.equals("ladra") || nInput.equals("speak") || nInput.equals("talk");
+            case 11:
+                return nInput.equals("juega") || nInput.equals("play");
+            case 12:
+                return nInput.equals("silencio") || nInput.equals("calla") || nInput.equals("callate") || nInput.equals("silent") || nInput.equals("mute");
+            case 13:
+                return nInput.equals("a la cesta") || nInput.equals("a casa") || nInput.equals("casa") || nInput.equals("cesta") || nInput.equals("nest") || nInput.equals("basket");
+            case 14:
+                return nInput.equals("bebe") || nInput.equals("beber") || nInput.equals("toma agua") || nInput.equals("drink");
+            case 15:
+                return nInput.equals("sigueme izquierda") || nInput.equals("izquierda") || nInput.equals("follow left") || nInput.equals("left");
+            case 16:
+                return nInput.equals("sigueme derecha") || nInput.equals("derecha") || nInput.equals("follow right") || nInput.equals("right");
+            case 17:
+                return nInput.equals("juega al futbol") || nInput.equals("futbol") || nInput.equals("pelota") || nInput.equals("football") || nInput.equals("soccer");
+            case 18:
+                return nInput.equals("arrodillate") || nInput.equals("kneel");
+            case 19:
+                return nInput.equals("bota") || nInput.equals("bounce");
+            case 20:
+                return nInput.equals("estatua") || nInput.equals("statue");
+            case 21:
+                return nInput.equals("baila") || nInput.equals("dance");
+            case 22:
+                return nInput.equals("gira") || nInput.equals("spin") || nInput.equals("turn");
+            case 23:
+                return nInput.equals("enciende tv") || nInput.equals("cambia tv") || nInput.equals("tv") || nInput.equals("switch tv");
+            case 24:
+                return nInput.equals("adelante") || nInput.equals("forward");
+            case 25:
+                return nInput.equals("gira izquierda") || nInput.equals("turn left");
+            case 26:
+                return nInput.equals("gira derecha") || nInput.equals("turn right");
+            case 27:
+                return nInput.equals("relajate") || nInput.equals("relax");
+            case 28:
+                return nInput.equals("croa") || nInput.equals("croak");
+            case 29:
+                return nInput.equals("inmersion") || nInput.equals("dip") || nInput.equals("dive");
+            case 30:
+                return nInput.equals("saluda") || nInput.equals("wave");
+            case 31:
+                return nInput.equals("mambo") || nInput.equals("marcha");
+            case 32:
+                return nInput.equals("gran salto") || nInput.equals("high jump");
+            case 33:
+                return nInput.equals("baile pollo") || nInput.equals("baile del pollo") || nInput.equals("chicken dance");
+            case 34:
+                return nInput.equals("triple salto") || nInput.equals("triple jump");
+            case 35:
+                return nInput.equals("muestra alas") || nInput.equals("abre alas") || nInput.equals("alas") || nInput.equals("wings");
+            case 36:
+                return nInput.equals("echa fuego") || nInput.equals("fuego") || nInput.equals("breathe fire") || nInput.equals("fire");
+            case 37:
+                return nInput.equals("planea") || nInput.equals("glide");
+            case 38:
+                return nInput.equals("antorcha") || nInput.equals("torch");
+            case 40:
+                return nInput.equals("cambia vuelo") || nInput.equals("cambia de vuelo") || nInput.equals("flight");
+            case 41:
+                return nInput.equals("voltereta") || nInput.equals("roll");
+            case 42:
+                return nInput.equals("anillo fuego") || nInput.equals("aro de fuego") || nInput.equals("ring of fire");
+            case 43:
+                return nInput.equals("come") || nInput.equals("comer") || nInput.equals("eat");
+            case 44:
+                return nInput.equals("mover cola") || nInput.equals("mueve la cola") || nInput.equals("mueve cola") || nInput.equals("cola") || nInput.equals("wag") || nInput.equals("wag tail");
+            case 45:
+                return nInput.equals("cuenta") || nInput.equals("count");
+            case 46:
+                return nInput.equals("cruzar") || nInput.equals("cria") || nInput.equals("breed");
+            default:
+                return false;
+        }
     }
 
     public void dispose() {
