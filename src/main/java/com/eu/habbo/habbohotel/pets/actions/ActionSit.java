@@ -10,21 +10,20 @@ import com.eu.habbo.habbohotel.users.Habbo;
 public class ActionSit extends PetAction {
     public ActionSit() {
         super(PetTasks.SIT, true);
+        this.statusToRemove.add(RoomUnitStatus.MOVE);
+        this.statusToRemove.add(RoomUnitStatus.LAY);
+        this.statusToRemove.add(RoomUnitStatus.DEAD);
     }
 
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
-        if (pet.getTask() != PetTasks.SIT && !pet.getRoomUnit().hasStatus(RoomUnitStatus.SIT)) {
-            pet.getRoomUnit().setStatus(RoomUnitStatus.SIT, pet.getRoom().getStackHeight(pet.getRoomUnit().getX(), pet.getRoomUnit().getY(), false) - 0.50 + "");
+        pet.getRoomUnit().setStatus(RoomUnitStatus.SIT, (pet.getRoom().getStackHeight(pet.getRoomUnit().getX(), pet.getRoomUnit().getY(), false) - 0.50) + "");
 
-            if (pet.getHappyness() > 75)
-                pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
-            else
-                pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
+        if (pet.getHappyness() > 75)
+            pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
+        else
+            pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
 
-            return true;
-        }
-
-        return false;
+        return true;
     }
 }

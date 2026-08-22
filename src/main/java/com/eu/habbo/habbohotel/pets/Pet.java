@@ -764,4 +764,12 @@ public class Pet implements ISerialize, Runnable {
     public void setStayStartedAt(int stayStartedAt) {
         this.stayStartedAt = stayStartedAt;
     }
+
+    public int getFreeCommandTicks() {
+        return this.freeCommandTicks;
+    }
+
+    public void setFreeCommandTicks(int freeCommandTicks) {
+        this.freeCommandTicks = freeCommandTicks;
+    }
 }

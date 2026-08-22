@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.pets;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.Habbo;
 
@@ -51,24 +52,35 @@ public class PetCommand implements Comparable<PetCommand> {
         }
 
         if (this.action != null) {
-            if (this.action.petTask != pet.getTask()) {
-                if (this.action.stopsPetWalking) {
-                    pet.getRoomUnit().setGoalLocation(pet.getRoomUnit().getCurrentLocation());
+            if (this.action.stopsPetWalking) {
+                pet.getRoomUnit().setGoalLocation(pet.getRoomUnit().getCurrentLocation());
+                pet.getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
+            }
+            if (this.action.apply(pet, habbo, data)) {
+                pet.setTask(this.action.petTask);
+                if (this.action.petTask != PetTasks.STAY && this.action.petTask != PetTasks.FREE) {
+                    pet.setFreeCommandTicks(30);
                 }
-                if (this.action.apply(pet, habbo, data)) {
-                    for (RoomUnitStatus status : this.action.statusToRemove) {
-                        pet.getRoomUnit().removeStatus(status);
-                    }
 
-                    for (RoomUnitStatus status : this.action.statusToSet) {
-                        pet.getRoomUnit().setStatus(status, "0");
-                    }
+                for (RoomUnitStatus status : this.action.statusToRemove) {
+                    pet.getRoomUnit().removeStatus(status);
+                }
 
+                for (RoomUnitStatus status : this.action.statusToSet) {
+                    pet.getRoomUnit().setStatus(status, "0");
+                }
+
+                if (this.action.gestureToSet != null) {
                     pet.getRoomUnit().setStatus(RoomUnitStatus.GESTURE, this.action.gestureToSet);
+                }
 
-                    pet.addEnergy(-this.energyCost);
-                    pet.addHappyness(-this.happynessCost);
-                    pet.addExperience(this.xp);
+                pet.addEnergy(-this.energyCost);
+                pet.addHappyness(-this.happynessCost);
+                pet.addExperience(this.xp);
+
+                pet.getRoomUnit().statusUpdate(true);
+                if (pet.getRoom() != null) {
+                    pet.getRoom().sendComposer(new RoomUserStatusComposer(pet.getRoomUnit()).compose());
                 }
             }
         }

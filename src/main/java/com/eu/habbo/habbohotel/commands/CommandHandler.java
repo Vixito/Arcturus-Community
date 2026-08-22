@@ -148,7 +148,7 @@ public class CommandHandler {
 
                         Pet pet = petIterator.value();
 
-                        if (pet != null) {
+                        if (pet != null && pet.getPetData() != null && pet.getPetData().getPetCommands() != null) {
                             if (pet.getName().equalsIgnoreCase(args[0])) {
                                 StringBuilder s = new StringBuilder();
 
@@ -156,10 +156,21 @@ public class CommandHandler {
                                     s.append(args[i]).append(" ");
                                 }
 
-                                s = new StringBuilder(s.substring(0, s.length() - 1));
+                                String inputKey = s.substring(0, s.length() - 1).trim();
+                                String normalizedInput = java.text.Normalizer.normalize(inputKey, java.text.Normalizer.Form.NFD)
+                                        .replaceAll("\\p{M}", "")
+                                        .replaceAll("[^a-zA-Z0-9 ]", "")
+                                        .trim();
 
                                 for (PetCommand command : pet.getPetData().getPetCommands()) {
-                                    if (command.key.equalsIgnoreCase(s.toString())) {
+                                    if (command == null || command.key == null) continue;
+                                    String cmdKey = command.key;
+                                    String normalizedCmd = java.text.Normalizer.normalize(cmdKey, java.text.Normalizer.Form.NFD)
+                                            .replaceAll("\\p{M}", "")
+                                            .replaceAll("[^a-zA-Z0-9 ]", "")
+                                            .trim();
+
+                                    if (cmdKey.equalsIgnoreCase(inputKey) || normalizedCmd.equalsIgnoreCase(normalizedInput)) {
                                         if (pet instanceof RideablePet && ((RideablePet) pet).getRider() != null) {
                                             if (((RideablePet) pet).getRider().getHabboInfo().getId() == gameClient.getHabbo().getHabboInfo().getId()) {
                                                 ((RideablePet) pet).getRider().getHabboInfo().dismountPet();
