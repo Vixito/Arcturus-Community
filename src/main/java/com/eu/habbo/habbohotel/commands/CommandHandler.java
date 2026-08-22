@@ -12,6 +12,7 @@ import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.rooms.RoomRightLevels;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserTypingComposer;
 import com.eu.habbo.plugin.events.users.UserCommandEvent;
 import com.eu.habbo.plugin.events.users.UserExecuteCommandEvent;
@@ -178,10 +179,17 @@ public class CommandHandler {
                                             break;
                                         }
 
-                                        if (command.level <= pet.getLevel())
-                                            pet.handleCommand(command, gameClient.getHabbo(), args);
-                                        else
-                                            pet.say(pet.getPetData().randomVocal(PetVocalsType.UNKNOWN_COMMAND));
+                                        final Pet targetPet = pet;
+                                        final PetCommand targetCommand = command;
+                                        final Habbo targetHabbo = gameClient.getHabbo();
+                                        final String[] targetArgs = args;
+
+                                        Emulator.getThreading().run(() -> {
+                                            if (targetCommand.level <= targetPet.getLevel())
+                                                targetPet.handleCommand(targetCommand, targetHabbo, targetArgs);
+                                            else
+                                                targetPet.say(targetPet.getPetData().randomVocal(PetVocalsType.UNKNOWN_COMMAND));
+                                        }, 350);
 
                                         break;
                                     }

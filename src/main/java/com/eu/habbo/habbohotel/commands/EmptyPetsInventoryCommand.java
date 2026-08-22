@@ -18,7 +18,9 @@ public class EmptyPetsInventoryCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
-        if (params.length == 1 || (params.length >= 2 && !params[1].equals(Emulator.getTexts().getValue("generic.yes")))) {
+        boolean isConfirm = params.length >= 2 && (params[1].equalsIgnoreCase(Emulator.getTexts().getValue("generic.yes")) || params[1].equalsIgnoreCase("si") || params[1].equalsIgnoreCase("sí") || params[1].equalsIgnoreCase("yes"));
+
+        if (!isConfirm) {
             if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
                 if (gameClient.getHabbo().getHabboInfo().getCurrentRoom().getUserCount() > 10) {
                     gameClient.getHabbo().alert(Emulator.getTexts().getValue("commands.succes.cmd_empty_pets.verify").replace("%generic.yes%", Emulator.getTexts().getValue("generic.yes")));
@@ -30,7 +32,7 @@ public class EmptyPetsInventoryCommand extends Command {
             return true;
         }
 
-        if (params.length >= 2 && params[1].equalsIgnoreCase(Emulator.getTexts().getValue("generic.yes"))) {
+        if (isConfirm) {
 
             Habbo habbo = (params.length == 3 && gameClient.getHabbo().hasPermission(Permission.ACC_EMPTY_OTHERS)) ? Emulator.getGameEnvironment().getHabboManager().getHabbo(params[2]) : gameClient.getHabbo();
 
