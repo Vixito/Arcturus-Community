@@ -17,12 +17,12 @@ import com.eu.habbo.core.RedisPublisher;
 
 public class KissCommand extends Command {
     public KissCommand() {
-        super("cmd_sit", new String[]{"kiss", "beso"});
+        super("cmd_sit", new String[]{"besar", "kiss", "beso"});
     }
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
-        if (params.length == 2) {
+        if (params.length >= 2) {
             Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
             if (room == null) return true;
 

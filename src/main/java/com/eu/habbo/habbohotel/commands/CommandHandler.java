@@ -84,10 +84,13 @@ public class CommandHandler {
                                             return userExecuteCommandEvent.isSuccess();
                                         }
 
-                                        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null)
-                                            gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserTypingComposer(gameClient.getHabbo().getRoomUnit(), false).compose());
+                                        String[] eventParts = parts.clone();
+                                        if (command instanceof KissCommand) eventParts[0] = "besar";
+                                        else if (command instanceof HugCommand) eventParts[0] = "abrazar";
+                                        else if (command instanceof SlapCommand) eventParts[0] = "slap";
+                                        else if (command instanceof KillCommand) eventParts[0] = "kill";
 
-                                        UserCommandEvent event = new UserCommandEvent(gameClient.getHabbo(), parts, command.handle(gameClient, parts));
+                                        UserCommandEvent event = new UserCommandEvent(gameClient.getHabbo(), eventParts, command.handle(gameClient, parts));
                                         Emulator.getPluginManager().fireEvent(event);
 
                                         succes = event.succes;
@@ -298,6 +301,9 @@ public class CommandHandler {
         addCommand(new SubscriptionCommand());
         addCommand(new KissCommand());
         addCommand(new HugCommand());
+        addCommand(new SlapCommand());
+        addCommand(new KillCommand());
+        addCommand(new ClapCommand());
 
         addCommand(new TestCommand());
     }

@@ -17,12 +17,12 @@ import com.eu.habbo.core.RedisPublisher;
 
 public class HugCommand extends Command {
     public HugCommand() {
-        super("cmd_sit", new String[]{"hug", "abrazo"});
+        super("cmd_sit", new String[]{"abrazar", "hug", "abrazo"});
     }
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
-        if (params.length == 2) {
+        if (params.length >= 2) {
             Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
             if (room == null) return true;
 
