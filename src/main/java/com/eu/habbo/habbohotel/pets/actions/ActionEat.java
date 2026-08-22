@@ -17,17 +17,18 @@ public class ActionEat extends PetAction {
 
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
-        //Eat
+        pet.clearPosture();
+        Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.EAT, null, false), 2500);
+
         if (pet.getLevelHunger() > 40) {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.HUNGRY));
-            Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.EAT, null, false), 500);
-            pet.eat();
-
-            return true;
+        } else if (pet.getHappyness() > 50) {
+            pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
         } else {
-            pet.say(pet.getPetData().randomVocal(PetVocalsType.DISOBEY));
-            return false;
+            pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_HAPPY));
         }
 
+        pet.eat();
+        return true;
     }
 }

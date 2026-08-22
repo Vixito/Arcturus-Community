@@ -52,6 +52,12 @@ public class PetManager {
             this.put(15, new ActionFollowLeft());
             this.put(16, new ActionFollowRight());
             this.put(17, new ActionPlayFootball());
+            this.put(18, new ActionBeg());
+            this.put(19, new ActionJump());
+            this.put(20, new ActionStay());
+            this.put(21, new ActionDance());
+            this.put(22, new ActionTurnRight());
+            this.put(23, new ActionSpeak());
             this.put(24, new ActionMoveForward());
             this.put(25, new ActionTurnLeft());
             this.put(26, new ActionTurnRight());
@@ -59,12 +65,21 @@ public class PetManager {
             this.put(28, new ActionCroak());
             this.put(29, new ActionDip());
             this.put(30, new ActionWave());
+            this.put(31, new ActionDance());
+            this.put(32, new ActionJump());
+            this.put(33, new ActionDance());
+            this.put(34, new ActionJump());
             this.put(35, new ActionWings());
             this.put(36, new ActionBreatheFire());
+            this.put(37, new ActionWings());
             this.put(38, new ActionTorch());
+            this.put(40, new ActionWings());
+            this.put(41, new ActionPlay());
+            this.put(42, new ActionJump());
             this.put(43, new ActionEat());
+            this.put(44, new ActionWagTail());
+            this.put(45, new ActionSpeak());
             this.put(46, new ActionBreed());
-
         }
     };
     private final THashMap<Integer, THashSet<PetRace>> petRaces;
