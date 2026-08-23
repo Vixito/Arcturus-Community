@@ -57,17 +57,22 @@ public class CatalogBuyItemEvent extends MessageHandler {
             }
 
             CatalogPage page = null;
+            CatalogItem searchedItem = null;
 
             if (pageId == -12345678 || pageId == -1) {
-                CatalogItem searchedItem = Emulator.getGameEnvironment().getCatalogManager().getCatalogItem(itemId);
+                searchedItem = Emulator.getGameEnvironment().getCatalogManager().getCatalogItem(itemId);
+                if (searchedItem == null) {
+                    int realItemId = Emulator.getGameEnvironment().getCatalogManager().offerDefs.get(itemId);
+                    if (realItemId != 0) {
+                        searchedItem = Emulator.getGameEnvironment().getCatalogManager().getCatalogItem(realItemId);
+                    }
+                }
 
-                if (searchedItem.getOfferId() > 0) {
+                if (searchedItem != null) {
                     page = Emulator.getGameEnvironment().getCatalogManager().getCatalogPage(searchedItem.getPageId());
 
-                    if(page != null) {
-                        if (page.getCatalogItem(itemId).getOfferId() <= 0) {
-                            page = null;
-                        } else if (page.getRank() > this.client.getHabbo().getHabboInfo().getRank().getId()) {
+                    if (page != null) {
+                        if (page.getRank() > this.client.getHabbo().getHabboInfo().getRank().getId()) {
                             page = null;
                         } else if (page.getLayout() != null && page.getLayout().equalsIgnoreCase(CatalogPageLayouts.club_gift.name())) {
                             page = null;
@@ -213,9 +218,15 @@ public class CatalogBuyItemEvent extends MessageHandler {
 
             if (page instanceof RecentPurchasesLayout)
                 item = this.client.getHabbo().getHabboStats().getRecentPurchases().get(itemId);
-
+            else if (searchedItem != null)
+                item = searchedItem;
             else
                 item = page.getCatalogItem(itemId);
+
+            if (item == null) {
+                this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR).compose());
+                return;
+            }
             // temp patch, can a dev with better knowledge than me look into this asap pls.
             if (page instanceof  BotsLayout) {
                 if (!this.client.getHabbo().hasPermission(Permission.ACC_UNLIMITED_BOTS) && this.client.getHabbo().getInventory().getBotsComponent().getBots().size() >= BotManager.MAXIMUM_BOT_INVENTORY_SIZE) {
