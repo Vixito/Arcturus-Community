@@ -60,9 +60,9 @@ public class CatalogBuyItemEvent extends MessageHandler {
             CatalogItem searchedItem = null;
 
             if (pageId == -12345678 || pageId == -1) {
-                searchedItem = Emulator.getGameEnvironment().getCatalogManager().getCatalogItemBySprite(itemId);
+                searchedItem = Emulator.getGameEnvironment().getCatalogManager().getCatalogItem(itemId);
                 if (searchedItem == null) {
-                    searchedItem = Emulator.getGameEnvironment().getCatalogManager().getCatalogItem(itemId);
+                    searchedItem = Emulator.getGameEnvironment().getCatalogManager().getCatalogItemBySprite(itemId);
                 }
                 if (searchedItem == null) {
                     int realItemId = Emulator.getGameEnvironment().getCatalogManager().offerDefs.get(itemId);
