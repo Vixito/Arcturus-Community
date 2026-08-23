@@ -198,6 +198,7 @@ public class CatalogManager {
     public final THashMap<Integer, TargetOffer> targetOffers;
     public final THashMap<Integer, ClothItem> clothing;
     public final TIntIntHashMap offerDefs;
+    public final TIntIntHashMap spriteDefs;
     public final Item ecotronItem;
     public final THashMap<Integer, CatalogLimitedConfiguration> limitedNumbers;
     private final List<Voucher> vouchers;
@@ -214,6 +215,7 @@ public class CatalogManager {
         this.targetOffers = new THashMap<>();
         this.clothing = new THashMap<>();
         this.offerDefs = new TIntIntHashMap();
+        this.spriteDefs = new TIntIntHashMap();
         this.vouchers = new ArrayList<>();
         this.limitedNumbers = new THashMap<>();
 
@@ -376,8 +378,8 @@ public class CatalogManager {
                     for (com.eu.habbo.habbohotel.items.Item baseItem : item.getBaseItems()) {
                         page.addOfferId(baseItem.getSpriteId());
                         page.addOfferId(baseItem.getId());
-                        this.offerDefs.put(baseItem.getSpriteId(), item.getId());
-                        this.offerDefs.put(baseItem.getId(), item.getId());
+                        this.spriteDefs.put(baseItem.getSpriteId(), item.getId());
+                        this.spriteDefs.put(baseItem.getId(), item.getId());
                     }
                 } else
                     item.update(set);
@@ -628,6 +630,14 @@ public class CatalogManager {
         }
 
         return item[0];
+    }
+
+    public CatalogItem getCatalogItemBySprite(int spriteId) {
+        int itemId = this.spriteDefs.get(spriteId);
+        if (itemId != 0) {
+            return this.getCatalogItem(itemId);
+        }
+        return null;
     }
 
 
