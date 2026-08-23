@@ -377,7 +377,9 @@ public class CatalogManager {
                     this.offerDefs.put(item.getId(), item.getId());
                     for (com.eu.habbo.habbohotel.items.Item baseItem : item.getBaseItems()) {
                         page.addOfferId(baseItem.getSpriteId());
+                        page.addOfferId(baseItem.getId());
                         this.spriteDefs.put(baseItem.getSpriteId(), item.getId());
+                        this.spriteDefs.put(baseItem.getId(), item.getId());
                     }
                 } else
                     item.update(set);
