@@ -138,6 +138,13 @@ public class BattlePassManager {
                             if (leveledUp) {
                                 habbo.whisper("¡Felicidades! Has subido al Nivel " + userLevel + " en el Pase de Batalla.", RoomChatMessageBubbles.FRANK);
                             }
+
+                            THashMap<String, String> keys = new THashMap<>();
+                            keys.put("display", "BUBBLE");
+                            keys.put("image", (mission.getImage() != null && !mission.getImage().isEmpty()) ? mission.getImage() : "https://cdn.habbten.com/c_images/album1584/ACH_BattlePass1.png");
+                            keys.put("message", "¡Has completado el reto <b>" + mission.getName() + "</b>! (+" + rewardXp + " XP)");
+                            keys.put("linkUrl", "battlepass/open/mission/" + mission.getName());
+                            habbo.getClient().sendResponse(new com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer(com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys.ACHIEVEMENT.key, keys));
                         }
                     }
                 }
