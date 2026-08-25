@@ -69,11 +69,11 @@ public class CommandsCommand extends Command {
         // 2. Categoría VIP
         renderCategory(messageList, "VIP", vipCmds, searchFilter, "#d97706");
 
-        // 3. Categorías Staff clasificadas por cada rango correspondiente
+        // 3. Categorías Staff clasificadas por cada rango correspondiente (solo nombre del rango)
         for (Map.Entry<Integer, List<Command>> entry : staffCmds.entrySet()) {
             com.eu.habbo.habbohotel.permissions.Rank rankObj = Emulator.getGameEnvironment().getPermissionsManager().getRank(entry.getKey());
             String rankName = (rankObj != null) ? rankObj.getName() : "Rango " + entry.getKey();
-            renderCategory(messageList, "Staff: " + rankName, entry.getValue(), searchFilter, "#7c3aed");
+            renderCategory(messageList, rankName, entry.getValue(), searchFilter, "#7c3aed");
         }
 
         gameClient.sendResponse(new com.eu.habbo.messages.outgoing.generic.alerts.MessagesForYouComposer(messageList));
