@@ -26,10 +26,10 @@ public class GameCenterGameListComposer extends MessageComposer {
         this.response.appendString("");
 
         this.response.appendInt(4);
-        this.response.appendString("slotcar");
-        this.response.appendString("4a95df");
+        this.response.appendString("wobblesquabble");
+        this.response.appendString("0284c7");
         this.response.appendString("");
-        this.response.appendString(Emulator.getConfig().getValue("images.gamecenter.slotcar", "/game/swf/c_images/gamecenter_slotcar/"));
+        this.response.appendString(Emulator.getConfig().getValue("images.gamecenter.wobblesquabble", "/game/swf/c_images/gamecenter_wobblesquabble/"));
         this.response.appendString("");
 
         this.response.appendInt(5);

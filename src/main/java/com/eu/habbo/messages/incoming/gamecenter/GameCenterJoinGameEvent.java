@@ -18,10 +18,10 @@ public class GameCenterJoinGameEvent extends MessageHandler {
         {
             this.client.sendResponse(new GameCenterAchievementsConfigurationComposer());
             this.client.sendResponse(new BaseJumpLoadGameURLComposer(3, "/game/games/basejump/index.html"));
-        } else if (gameId == 4) // SlotCar
+        } else if (gameId == 4) // Wobble Squabble
         {
             this.client.sendResponse(new BaseJumpJoinQueueComposer(gameId));
-            this.client.sendResponse(new BaseJumpLoadGameURLComposer(4, "/game/games/slotcar/index.html"));
+            this.client.sendResponse(new BaseJumpLoadGameURLComposer(4, "/game/games/wobblesquabble/index.html"));
         } else if (gameId == 5) // Battle Ball
         {
             this.client.sendResponse(new BaseJumpJoinQueueComposer(gameId));
