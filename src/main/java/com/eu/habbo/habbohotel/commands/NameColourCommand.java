@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.subscriptions.Subscription;
 import com.eu.habbo.plugin.EventHandler;
 import com.eu.habbo.plugin.EventListener;
 import com.eu.habbo.plugin.events.users.UserLoginEvent;
@@ -57,7 +58,7 @@ public class NameColourCommand extends Command implements EventListener {
         Habbo habbo = gameClient.getHabbo();
         if (habbo == null) return false;
 
-        boolean isVip = habbo.getHabboStats().hasHabboClub() || habbo.getHabboInfo().getRank().getId() >= 2 || habbo.hasPermission("acc_chatcolor") || habbo.hasPermission("acc_vip");
+        boolean isVip = habbo.getHabboStats().hasSubscription(Subscription.HABBO_CLUB) || habbo.getHabboInfo().getRank().getId() >= 2 || habbo.hasPermission("acc_chatcolor") || habbo.hasPermission("acc_vip");
         if (!isVip) {
             habbo.whisper("⚠️ El comando :namecolour es exclusivo para miembros VIP. Adquiere tu membresía VIP en la Tienda Oficial (/tienda) para desbloquearlo.", RoomChatMessageBubbles.ALERT);
             return true;
@@ -132,7 +133,7 @@ public class NameColourCommand extends Command implements EventListener {
                 if (set.next()) {
                     String color = set.getString("name_colour");
                     if (color != null && !color.isEmpty()) {
-                        if (event.habbo.getHabboStats().hasHabboClub() || event.habbo.getHabboInfo().getRank().getId() >= 2) {
+                        if (event.habbo.getHabboStats().hasSubscription(Subscription.HABBO_CLUB) || event.habbo.getHabboInfo().getRank().getId() >= 2) {
                             event.habbo.getHabboStats().cache.put(CACHE_KEY, color);
                         } else {
                             event.habbo.getHabboStats().cache.remove(CACHE_KEY);

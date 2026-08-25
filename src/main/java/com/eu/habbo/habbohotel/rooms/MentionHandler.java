@@ -5,7 +5,6 @@ import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.plugin.EventHandler;
 import com.eu.habbo.plugin.EventListener;
-import com.eu.habbo.plugin.events.users.UserShoutEvent;
 import com.eu.habbo.plugin.events.users.UserTalkEvent;
 
 import java.util.regex.Matcher;
@@ -16,12 +15,6 @@ public class MentionHandler implements EventListener {
 
     @EventHandler
     public static void onUserTalkEvent(UserTalkEvent event) {
-        if (event == null || event.chatMessage == null || event.habbo == null) return;
-        handleMention(event.habbo, event.chatMessage.getMessage());
-    }
-
-    @EventHandler
-    public static void onUserShoutEvent(UserShoutEvent event) {
         if (event == null || event.chatMessage == null || event.habbo == null) return;
         handleMention(event.habbo, event.chatMessage.getMessage());
     }
@@ -38,7 +31,7 @@ public class MentionHandler implements EventListener {
             if (target.equals("everyone") || target.equals("todos")) {
                 if (sender.hasPermission("acc_mention_everyone") || sender.hasPermission("acc_supporttool")) {
                     for (Habbo h : room.getHabbos()) {
-                        if (h != null && h.getId() != sender.getId()) {
+                        if (h != null && h.getHabboInfo().getId() != sender.getHabboInfo().getId()) {
                             h.whisper("📢 <b>" + sender.getHabboInfo().getUsername() + "</b> ha mencionado a todos en la sala: " + text, RoomChatMessageBubbles.ALERT);
                         }
                     }
@@ -49,8 +42,8 @@ public class MentionHandler implements EventListener {
                 if (sender.hasPermission("acc_mention_friends") || sender.hasPermission("acc_supporttool")) {
                     int notified = 0;
                     for (Habbo h : room.getHabbos()) {
-                        if (h != null && h.getId() != sender.getId()) {
-                            MessengerBuddy buddy = sender.getMessenger() != null ? sender.getMessenger().getFriend(h.getId()) : null;
+                        if (h != null && h.getHabboInfo().getId() != sender.getHabboInfo().getId()) {
+                            MessengerBuddy buddy = sender.getMessenger() != null ? sender.getMessenger().getFriend(h.getHabboInfo().getId()) : null;
                             if (buddy != null) {
                                 h.whisper("📢 Tu amigo/a <b>" + sender.getHabboInfo().getUsername() + "</b> te ha mencionado en la sala: " + text, RoomChatMessageBubbles.ALERT);
                                 notified++;
@@ -66,7 +59,7 @@ public class MentionHandler implements EventListener {
                     if (targetHabbo == null) {
                         targetHabbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(target);
                     }
-                    if (targetHabbo != null && targetHabbo.getId() != sender.getId()) {
+                    if (targetHabbo != null && targetHabbo.getHabboInfo().getId() != sender.getHabboInfo().getId()) {
                         targetHabbo.whisper("📢 <b>" + sender.getHabboInfo().getUsername() + "</b> te ha mencionado: " + text, RoomChatMessageBubbles.ALERT);
                     }
                 }
