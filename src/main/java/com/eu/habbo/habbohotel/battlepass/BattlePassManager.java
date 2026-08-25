@@ -142,9 +142,10 @@ public class BattlePassManager {
                             THashMap<String, String> keys = new THashMap<>();
                             keys.put("display", "BUBBLE");
                             keys.put("image", (mission.getImage() != null && !mission.getImage().isEmpty()) ? mission.getImage() : "https://cdn.habbten.com/c_images/album1584/ACH_BattlePass1.png");
-                            keys.put("message", "¡Has completado el reto <b>" + mission.getName() + "</b>! (+" + rewardXp + " XP)");
-                            keys.put("linkUrl", "battlepass/open/mission/" + mission.getName());
-                            habbo.getClient().sendResponse(new com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer(com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys.ADMIN_TRANSIENT.key, keys));
+                            keys.put("message", "Reto completado: " + mission.getName() + " (+" + rewardXp + " XP)");
+                            keys.put("linkUrl", "battlepass/open/mission/" + java.net.URLEncoder.encode(mission.getName(), java.nio.charset.StandardCharsets.UTF_8).replace("+", "%20"));
+                            // Use "battlepass.complete" key — NOT present in ui-config.json, so no POP_UP override occurs
+                            habbo.getClient().sendResponse(new com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer("battlepass.complete", keys));
                         }
                     }
                 }
