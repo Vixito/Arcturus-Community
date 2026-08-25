@@ -102,8 +102,13 @@ public class CommandsCommand extends Command {
             }
         }
 
+        System.out.println("[CommandsCommand] User " + gameClient.getHabbo().getHabboInfo().getUsername() + " executed :commands");
+        System.out.println("[CommandsCommand] Sending " + messageList.size() + " message blocks");
+        
         gameClient.sendResponse(new com.eu.habbo.messages.outgoing.generic.alerts.MessagesForYouComposer(messageList));
-
+        
+        System.out.println("[CommandsCommand] Composer sent!");
+        
         return true;
     }
 }
