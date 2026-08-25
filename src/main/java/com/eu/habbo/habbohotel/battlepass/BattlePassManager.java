@@ -144,7 +144,7 @@ public class BattlePassManager {
                             keys.put("image", (mission.getImage() != null && !mission.getImage().isEmpty()) ? mission.getImage() : "https://cdn.habbten.com/c_images/album1584/ACH_BattlePass1.png");
                             keys.put("message", "¡Has completado el reto <b>" + mission.getName() + "</b>! (+" + rewardXp + " XP)");
                             keys.put("linkUrl", "battlepass/open/mission/" + mission.getName());
-                            habbo.getClient().sendResponse(new com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer(com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys.ACHIEVEMENT.key, keys));
+                            habbo.getClient().sendResponse(new com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer(com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys.ADMIN_TRANSIENT.key, keys));
                         }
                     }
                 }
