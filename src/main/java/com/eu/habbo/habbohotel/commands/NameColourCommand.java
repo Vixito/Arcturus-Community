@@ -58,9 +58,13 @@ public class NameColourCommand extends Command implements EventListener {
         Habbo habbo = gameClient.getHabbo();
         if (habbo == null) return false;
 
-        boolean isVip = habbo.getHabboStats().hasSubscription(Subscription.HABBO_CLUB) || habbo.getHabboInfo().getRank().getId() >= 2 || habbo.hasPermission("acc_chatcolor") || habbo.hasPermission("acc_vip");
+        boolean isVip = (habbo.getInventory() != null && habbo.getInventory().getBadgesComponent() != null && habbo.getInventory().getBadgesComponent().hasBadge("VIP"))
+                || habbo.getHabboStats().hasSubscription("BATTLE_PASS_VIP")
+                || habbo.getHabboInfo().getRank().getId() >= 2
+                || habbo.hasPermission("acc_vip")
+                || habbo.hasPermission("acc_chatcolor");
         if (!isVip) {
-            habbo.whisper("⚠️ El comando :namecolour es exclusivo para miembros VIP. Adquiere tu membresía VIP en la Tienda Oficial (/tienda) para desbloquearlo.", RoomChatMessageBubbles.ALERT);
+            habbo.whisper("⚠️ El comando :namecolour es exclusivo para miembros Habbten VIP. Adquiere tu membresía VIP en la Tienda Oficial para desbloquearlo.", RoomChatMessageBubbles.ALERT);
             return true;
         }
 
@@ -132,13 +136,16 @@ public class NameColourCommand extends Command implements EventListener {
             try (ResultSet set = statement.executeQuery()) {
                 if (set.next()) {
                     String color = set.getString("name_colour");
-                    if (color != null && !color.isEmpty()) {
-                        if (event.habbo.getHabboStats().hasSubscription(Subscription.HABBO_CLUB) || event.habbo.getHabboInfo().getRank().getId() >= 2) {
+                        boolean isVip = (event.habbo.getInventory() != null && event.habbo.getInventory().getBadgesComponent() != null && event.habbo.getInventory().getBadgesComponent().hasBadge("VIP"))
+                                || event.habbo.getHabboStats().hasSubscription("BATTLE_PASS_VIP")
+                                || event.habbo.getHabboInfo().getRank().getId() >= 2
+                                || event.habbo.hasPermission("acc_vip")
+                                || event.habbo.hasPermission("acc_chatcolor");
+                        if (isVip) {
                             event.habbo.getHabboStats().cache.put(CACHE_KEY, color);
                         } else {
                             event.habbo.getHabboStats().cache.remove(CACHE_KEY);
                         }
-                    }
                 }
             }
         } catch (SQLException e) {

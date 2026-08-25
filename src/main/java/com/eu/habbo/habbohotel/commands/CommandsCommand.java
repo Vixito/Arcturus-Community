@@ -28,7 +28,10 @@ public class CommandsCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
         int userRank = gameClient.getHabbo().getHabboInfo().getRank().getId();
-        boolean isVip = gameClient.getHabbo().getHabboStats().hasSubscription(Subscription.HABBO_CLUB) || userRank >= 2 || gameClient.getHabbo().hasPermission("acc_vip");
+        boolean isVip = (gameClient.getHabbo().getInventory() != null && gameClient.getHabbo().getInventory().getBadgesComponent() != null && gameClient.getHabbo().getInventory().getBadgesComponent().hasBadge("VIP"))
+                || gameClient.getHabbo().getHabboStats().hasSubscription("BATTLE_PASS_VIP")
+                || userRank >= 2
+                || gameClient.getHabbo().hasPermission("acc_vip");
         List<Command> commands = Emulator.getGameEnvironment().getCommandHandler().getCommandsForRank(userRank);
 
         List<String> messageList = new ArrayList<>();
@@ -73,7 +76,7 @@ public class CommandsCommand extends Command {
         renderCategory(messageList, "Comandos Generales de Usuario", userCmds, searchFilter, "#0284c7");
 
         // 2. Render VIP Commands
-        String vipTitle = isVip ? "Comandos VIP & Membresía (Activo)" : "Comandos VIP & Membresía (Exclusivo Tienda)";
+        String vipTitle = isVip ? "Comandos Habbten VIP (Activo)" : "Comandos Habbten VIP (Exclusivo VIP)";
         renderCategory(messageList, vipTitle, vipCmds, searchFilter, "#d97706");
 
         // 3. Render Staff Commands
