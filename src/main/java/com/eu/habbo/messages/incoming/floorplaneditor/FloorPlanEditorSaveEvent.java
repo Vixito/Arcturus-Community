@@ -67,12 +67,24 @@ public class FloorPlanEditorSaveEvent extends MessageHandler {
             int doorX = this.packet.readInt();
             int doorY = this.packet.readInt();
 
-            if (doorX < 0 || doorX > firstRowSize || doorY < 0 || doorY >= mapRows.length) {
-                errors.add("${notification.floorplan_editor.error.message.entry_tile_outside_map}");
-            }
+            boolean invalidDoor = (doorX < 0 || doorY < 0 || doorY >= mapRows.length || doorX >= mapRows[doorY].length() || mapRows[doorY].charAt(doorX) == 'x');
 
-            if (doorY < mapRows.length && doorX < mapRows[doorY].length() && mapRows[doorY].charAt(doorX) == 'x') {
-                errors.add("${notification.floorplan_editor.error.message.entry_not_on_tile}");
+            if (invalidDoor) {
+                boolean found = false;
+                for (int y = 0; y < mapRows.length; y++) {
+                    for (int x = 0; x < mapRows[y].length(); x++) {
+                        if (mapRows[y].charAt(x) != 'x') {
+                            doorX = x;
+                            doorY = y;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found) break;
+                }
+                if (!found) {
+                    errors.add("${notification.floorplan_editor.error.message.entry_not_on_tile}");
+                }
             }
 
             int doorRotation = this.packet.readInt();
