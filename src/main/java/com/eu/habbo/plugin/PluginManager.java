@@ -460,6 +460,9 @@ public class PluginManager {
             // MentionHandler events
             this.methods.add(MentionHandler.class.getMethod("onUserTalkEvent", UserTalkEvent.class));
             this.methods.add(MentionHandler.class.getMethod("onUserShoutEvent", UserShoutEvent.class));
+
+            // NameColour events
+            this.methods.add(com.eu.habbo.habbohotel.commands.NameColourCommand.class.getMethod("onUserLogin", UserLoginEvent.class));
         } catch (NoSuchMethodException e) {
             LOGGER.info("Failed to define default events!");
             LOGGER.error("Caught exception", e);

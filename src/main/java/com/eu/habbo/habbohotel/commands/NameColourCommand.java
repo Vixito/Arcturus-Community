@@ -4,14 +4,18 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.plugin.EventHandler;
+import com.eu.habbo.plugin.EventListener;
+import com.eu.habbo.plugin.events.users.UserLoginEvent;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class NameColourCommand extends Command {
+public class NameColourCommand extends Command implements EventListener {
     public static final String CACHE_KEY = "name_colour";
 
     private static final Map<String, String> COLOURS = new LinkedHashMap<>();
@@ -53,9 +57,15 @@ public class NameColourCommand extends Command {
         Habbo habbo = gameClient.getHabbo();
         if (habbo == null) return false;
 
+        boolean isVip = habbo.getHabboStats().hasHabboClub() || habbo.getHabboInfo().getRank().getId() >= 2 || habbo.hasPermission("acc_chatcolor") || habbo.hasPermission("acc_vip");
+        if (!isVip) {
+            habbo.whisper("⚠️ El comando :namecolour es exclusivo para miembros VIP. Adquiere tu membresía VIP en la Tienda Oficial (/tienda) para desbloquearlo.", RoomChatMessageBubbles.ALERT);
+            return true;
+        }
+
         if (params.length < 2 || params[1].equalsIgnoreCase("help") || params[1].equalsIgnoreCase("list")) {
             StringBuilder sb = new StringBuilder();
-            sb.append("<b>🎨 Colores de Nombre Disponibles:</b>\r\r");
+            sb.append("<b>🎨 Colores de Nombre VIP Disponibles:</b>\r\r");
             sb.append("• <b>rainbow</b> (Efecto Multicolor Arcoíris)\r");
             sb.append("• <b>gold / dorado</b> (Dorado brillante)\r");
             sb.append("• <b>red / rojo</b> (Rojo pasión)\r");
@@ -85,11 +95,10 @@ public class NameColourCommand extends Command {
 
         String colorHex = COLOURS.get(inputColor);
         if (colorHex == null) {
-            // Check if user passed a valid 6-char hex code (e.g. #ff00ea or ff00ea)
             if (inputColor.matches("^#?[0-9a-fA-F]{6}$")) {
                 colorHex = inputColor.startsWith("#") ? inputColor : "#" + inputColor;
             } else {
-                habbo.whisper("El color '" + inputColor + "' no existe. Escribe <code>:namecolour list</code> para ver los colores disponibles.", RoomChatMessageBubbles.ALERT);
+                habbo.whisper("El color '" + inputColor + "' no existe. Escribe :namecolour list para ver los colores disponibles.", RoomChatMessageBubbles.ALERT);
                 return true;
             }
         }
@@ -111,6 +120,29 @@ public class NameColourCommand extends Command {
                 Emulator.getLogging().logSQLException(e);
             }
         });
+    }
+
+    @EventHandler
+    public static void onUserLogin(UserLoginEvent event) {
+        if (event.habbo == null) return;
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT name_colour FROM users WHERE id = ? LIMIT 1")) {
+            statement.setInt(1, event.habbo.getHabboInfo().getId());
+            try (ResultSet set = statement.executeQuery()) {
+                if (set.next()) {
+                    String color = set.getString("name_colour");
+                    if (color != null && !color.isEmpty()) {
+                        if (event.habbo.getHabboStats().hasHabboClub() || event.habbo.getHabboInfo().getRank().getId() >= 2) {
+                            event.habbo.getHabboStats().cache.put(CACHE_KEY, color);
+                        } else {
+                            event.habbo.getHabboStats().cache.remove(CACHE_KEY);
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
+        }
     }
 
     public static String formatName(String username, String color) {
