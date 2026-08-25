@@ -94,6 +94,9 @@ public class NameColourCommand extends Command implements EventListener {
         if (inputColor.equals("reset") || inputColor.equals("none") || inputColor.equals("normal") || inputColor.equals("off")) {
             habbo.getHabboStats().cache.remove(CACHE_KEY);
             saveColor(habbo.getHabboInfo().getId(), "");
+            if (habbo.getHabboInfo().getCurrentRoom() != null) {
+                habbo.getHabboInfo().getCurrentRoom().sendComposer(new com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer(habbo).compose());
+            }
             habbo.whisper("Has restablecido el color de tu nombre al color original por defecto.", RoomChatMessageBubbles.ALERT);
             return true;
         }
@@ -110,6 +113,9 @@ public class NameColourCommand extends Command implements EventListener {
 
         habbo.getHabboStats().cache.put(CACHE_KEY, colorHex);
         saveColor(habbo.getHabboInfo().getId(), colorHex);
+        if (habbo.getHabboInfo().getCurrentRoom() != null) {
+            habbo.getHabboInfo().getCurrentRoom().sendComposer(new com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer(habbo).compose());
+        }
         habbo.whisper("¡Color de nombre actualizado con éxito a: <b>" + inputColor.toUpperCase() + "</b>!", RoomChatMessageBubbles.ALERT);
         return true;
     }

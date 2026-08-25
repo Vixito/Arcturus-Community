@@ -38,7 +38,8 @@ public class RoomUsersComposer extends MessageComposer {
         if (this.habbo != null) {
             this.response.appendInt(1);
             this.response.appendInt(this.habbo.getHabboInfo().getId());
-            this.response.appendString(this.habbo.getHabboInfo().getUsername());
+            String color = (String) this.habbo.getHabboStats().cache.get(com.eu.habbo.habbohotel.commands.NameColourCommand.CACHE_KEY);
+            this.response.appendString(com.eu.habbo.habbohotel.commands.NameColourCommand.formatName(this.habbo.getHabboInfo().getUsername(), color));
             this.response.appendString(this.habbo.getHabboInfo().getMotto());
             this.response.appendString(this.habbo.getHabboInfo().getLook());
             this.response.appendInt(this.habbo.getRoomUnit().getId()); //Room Unit ID
@@ -68,7 +69,8 @@ public class RoomUsersComposer extends MessageComposer {
             for (Habbo habbo : this.habbos) {
                 if (habbo != null) {
                     this.response.appendInt(habbo.getHabboInfo().getId());
-                    this.response.appendString(habbo.getHabboInfo().getUsername());
+                    String color = (String) habbo.getHabboStats().cache.get(com.eu.habbo.habbohotel.commands.NameColourCommand.CACHE_KEY);
+                    this.response.appendString(com.eu.habbo.habbohotel.commands.NameColourCommand.formatName(habbo.getHabboInfo().getUsername(), color));
                     this.response.appendString(habbo.getHabboInfo().getMotto());
                     this.response.appendString(habbo.getHabboInfo().getLook());
                     this.response.appendInt(habbo.getRoomUnit().getId()); //Room Unit ID
