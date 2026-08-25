@@ -56,7 +56,7 @@ public class SearchFurniCommand extends Command implements EventListener {
                     while (set.next()) {
                         found = true;
                         String pageName = set.getString("caption");
-                        event.habbo.whisper(Emulator.getTexts().getValue("commands.texts.cmd_searchfurni.2", "🔎 Puedes encontrar este furni en la página del catálogo: \"%pagename%\"").replace("%pagename%", pageName), RoomChatMessageBubbles.ALERT);
+                        event.habbo.whisper(Emulator.getTexts().getValue("commands.texts.cmd_searchfurni.2", "Puedes encontrar este furni en la sección del catálogo: \"%pagename%\"").replace("%pagename%", pageName), RoomChatMessageBubbles.ALERT);
                     }
                     if (!found) {
                         event.habbo.whisper("Este furni (" + event.furniture.getBaseItem().getName() + ") no se encuentra disponible actualmente en el catálogo.", RoomChatMessageBubbles.ALERT);
