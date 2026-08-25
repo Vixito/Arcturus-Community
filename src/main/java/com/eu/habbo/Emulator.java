@@ -103,7 +103,8 @@ public final class Emulator {
                 appender.start();
             }
 
-            Locale.setDefault(new Locale("en"));
+            Locale.setDefault(new Locale("es"));
+            TimeZone.setDefault(TimeZone.getTimeZone("GMT-5"));
             setBuild();
             Emulator.stopped = false;
             ConsoleCommand.load();
