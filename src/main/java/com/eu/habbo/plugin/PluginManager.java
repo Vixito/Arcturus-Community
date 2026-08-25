@@ -41,8 +41,16 @@ import com.eu.habbo.messages.outgoing.catalog.GiftConfigurationComposer;
 import com.eu.habbo.messages.outgoing.navigator.NewNavigatorEventCategoriesComposer;
 import com.eu.habbo.plugin.events.emulator.EmulatorConfigUpdatedEvent;
 import com.eu.habbo.plugin.events.emulator.EmulatorLoadedEvent;
+import com.eu.habbo.plugin.events.furniture.*;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitLookAtPointEvent;
+import com.eu.habbo.plugin.events.support.SupportTicketEvent;
 import com.eu.habbo.plugin.events.users.*;
+import com.eu.habbo.habbohotel.commands.undo.UndoHandler;
+import com.eu.habbo.habbohotel.commands.SetStateCommand;
+import com.eu.habbo.habbohotel.commands.SetRotationCommand;
+import com.eu.habbo.habbohotel.commands.SearchFurniCommand;
+import com.eu.habbo.habbohotel.modtool.TicketAlertHandler;
+import com.eu.habbo.habbohotel.rooms.MentionHandler;
 import com.eu.habbo.threading.runnables.RoomTrashing;
 import com.eu.habbo.threading.runnables.ShutdownEmulator;
 import com.google.gson.Gson;
@@ -425,6 +433,33 @@ public class PluginManager {
             this.methods.add(InteractionFootballGate.class.getMethod("onUserSavedLookEvent", UserSavedLookEvent.class));
             this.methods.add(PluginManager.class.getMethod("globalOnConfigurationUpdated", EmulatorConfigUpdatedEvent.class));
             this.methods.add(WiredHighscoreManager.class.getMethod("onEmulatorLoaded", EmulatorLoadedEvent.class));
+
+            // Undo events
+            this.methods.add(UndoHandler.class.getMethod("onUserLoginEvent", UserLoginEvent.class));
+            this.methods.add(UndoHandler.class.getMethod("onFurnitureRotatedEvent", FurnitureRotatedEvent.class));
+            this.methods.add(UndoHandler.class.getMethod("onFurniturePlacedEvent", FurniturePlacedEvent.class));
+            this.methods.add(UndoHandler.class.getMethod("onFurnitureMovedEvent", FurnitureMovedEvent.class));
+            this.methods.add(UndoHandler.class.getMethod("onFurniturePickedUpEvent", FurniturePickedUpEvent.class));
+
+            // SetState events
+            this.methods.add(SetStateCommand.class.getMethod("onFurniturePlaced", FurniturePlacedEvent.class));
+            this.methods.add(SetStateCommand.class.getMethod("onFurnitureMoved", FurnitureMovedEvent.class));
+
+            // SetRotation events
+            this.methods.add(SetRotationCommand.class.getMethod("onUserExitRoomEvent", UserExitRoomEvent.class));
+            this.methods.add(SetRotationCommand.class.getMethod("onFurniturePlaced", FurniturePlacedEvent.class));
+            this.methods.add(SetRotationCommand.class.getMethod("onFurnitureMoved", FurnitureMovedEvent.class));
+
+            // SearchFurni events
+            this.methods.add(SearchFurniCommand.class.getMethod("onUserExitRoomEvent", UserExitRoomEvent.class));
+            this.methods.add(SearchFurniCommand.class.getMethod("onFurnitureToggleEvent", FurnitureToggleEvent.class));
+
+            // TicketAlert events
+            this.methods.add(TicketAlertHandler.class.getMethod("onSupportTicketEvent", SupportTicketEvent.class));
+
+            // MentionHandler events
+            this.methods.add(MentionHandler.class.getMethod("onUserTalkEvent", UserTalkEvent.class));
+            this.methods.add(MentionHandler.class.getMethod("onUserShoutEvent", UserShoutEvent.class));
         } catch (NoSuchMethodException e) {
             LOGGER.info("Failed to define default events!");
             LOGGER.error("Caught exception", e);

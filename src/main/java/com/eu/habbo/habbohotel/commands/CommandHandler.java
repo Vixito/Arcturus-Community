@@ -265,6 +265,7 @@ public class CommandHandler {
         addCommand(new MuteBotsCommand());
         addCommand(new MuteCommand());
         addCommand(new MutePetsCommand());
+        addCommand(new NameColourCommand());
         addCommand(new PetInfoCommand());
         addCommand(new PickallCommand());
         addCommand(new PixelCommand());
@@ -287,9 +288,12 @@ public class CommandHandler {
         addCommand(new RoomPointsCommand());
         addCommand(new SayAllCommand());
         addCommand(new SayCommand());
+        addCommand(new SearchFurniCommand());
         addCommand(new SetMaxCommand());
         addCommand(new SetPollCommand());
+        addCommand(new SetRotationCommand());
         addCommand(new SetSpeedCommand());
+        addCommand(new SetStateCommand());
         addCommand(new ShoutAllCommand());
         addCommand(new ShoutCommand());
         addCommand(new ShutdownCommand());
@@ -308,6 +312,7 @@ public class CommandHandler {
         addCommand(new TransformCommand());
         addCommand(new TrashCommand());
         addCommand(new UnbanCommand());
+        addCommand(new UndoCommand());
         addCommand(new UnloadRoomCommand());
         addCommand(new UnmuteCommand());
         addCommand(new UpdateAchievements());

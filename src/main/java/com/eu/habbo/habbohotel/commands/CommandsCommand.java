@@ -69,6 +69,11 @@ public class CommandsCommand extends Command {
                         else if (key.equals("diagonal")) description = "Activa/desactiva caminar en diagonal en tu sala. (Requiere derechos)";
                         else if (key.equals("furni")) description = "Muestra la lista y cantidad de furnis colocados en la sala actual. Uso: :furni";
                         else if (key.equals("staffalert") || key.equals("sa")) description = "Envía un mensaje de alerta a todo el equipo staff en línea. Uso: :sa [mensaje]";
+                        else if (key.equals("setstate") || key.equals("state")) description = "Fija el estado con el que se colocarán/moverán los furnis. Uso: :setstate [0-100] o :setstate";
+                        else if (key.equals("setrotation") || key.equals("rot") || key.equals("setrot")) description = "Fija la rotación de los furnis al colocarlos/moverlos. Uso: :setrotation [0-7] o :setrotation";
+                        else if (key.equals("undo")) description = "Deshace la última acción de furni en la sala (mover, rotar, colocar, recoger). Uso: :undo";
+                        else if (key.equals("searchfurni") || key.equals("findfurni")) description = "Activa el modo de búsqueda de furnis en el catálogo al hacer clic. Uso: :searchfurni";
+                        else if (key.equals("namecolour") || key.equals("colorname") || key.equals("colour") || key.equals("color")) description = "Cambia el color de tu nombre de usuario. Uso: :namecolour [color | list | reset]";
                         else if (key.equals("test")) description = "Ejecuta un diagnóstico del emulador: sala, usuarios y memoria RAM. Uso: :test";
                         else if (key.equals("warp")) description = "Teletransporta a un usuario a tu posición.";
                         else if (key.equals("wordquiz")) description = "Inicia un quiz de preguntas en la sala.";
