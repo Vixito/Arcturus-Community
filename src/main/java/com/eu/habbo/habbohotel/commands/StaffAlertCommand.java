@@ -19,7 +19,8 @@ public class StaffAlertCommand extends Command {
                 message.append(params[i]).append(" ");
             }
 
-            Emulator.getGameEnvironment().getHabboManager().staffAlert(message + "\r\n-" + gameClient.getHabbo().getHabboInfo().getUsername());
+            String formattedMessage = message.toString().trim() + "\r\n\r\n- " + gameClient.getHabbo().getHabboInfo().getUsername();
+            Emulator.getGameEnvironment().getHabboManager().staffAlert(formattedMessage);
             Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new FriendChatMessageComposer(new Message(gameClient.getHabbo().getHabboInfo().getId(), -1, message.toString())).compose(), "acc_staff_chat", gameClient);
         } else {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_staffalert.forgot_message"), RoomChatMessageBubbles.ALERT);

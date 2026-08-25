@@ -240,6 +240,7 @@ public class CommandHandler {
         addCommand(new FloorPlanCommand());
         addCommand(new FreezeBotsCommand());
         addCommand(new FreezeCommand());
+        addCommand(new FurniCommand());
         addCommand(new GiftCommand());
         addCommand(new GiveRankCommand());
         addCommand(new HabnamCommand());

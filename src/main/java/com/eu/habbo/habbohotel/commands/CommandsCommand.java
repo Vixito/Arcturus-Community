@@ -67,7 +67,8 @@ public class CommandsCommand extends Command {
                         else if (key.equals("pickall")) description = "Recoge todos tus furnis en la sala. (Requiere ser dueño)";
                         else if (key.equals("ejectall")) description = "Expulsa los furnis de otros en tu sala. (Requiere ser dueño)";
                         else if (key.equals("diagonal")) description = "Activa/desactiva caminar en diagonal en tu sala. (Requiere derechos)";
-                        else if (key.equals("freeze_bots")) description = "Congela o descongela los bots de la sala. (Requiere derechos)";
+                        else if (key.equals("furni")) description = "Muestra la lista y cantidad de furnis colocados en la sala actual. Uso: :furni";
+                        else if (key.equals("staffalert") || key.equals("sa")) description = "Envía un mensaje de alerta a todo el equipo staff en línea. Uso: :sa [mensaje]";
                         else if (key.equals("test")) description = "Ejecuta un diagnóstico del emulador: sala, usuarios y memoria RAM. Uso: :test";
                         else if (key.equals("warp")) description = "Teletransporta a un usuario a tu posición.";
                         else if (key.equals("wordquiz")) description = "Inicia un quiz de preguntas en la sala.";
