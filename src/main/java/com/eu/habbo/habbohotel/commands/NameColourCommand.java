@@ -69,22 +69,24 @@ public class NameColourCommand extends Command implements EventListener {
         }
 
         if (params.length < 2 || params[1].equalsIgnoreCase("help") || params[1].equalsIgnoreCase("list")) {
+            String activeColor = (String) habbo.getHabboStats().cache.get(CACHE_KEY);
             StringBuilder sb = new StringBuilder();
-            sb.append("<b>🎨 Colores de Nombre VIP Disponibles:</b>\r\r");
-            sb.append("• <b>rainbow</b> (Efecto Multicolor Arcoíris)\r");
-            sb.append("• <b>gold / dorado</b> (Dorado brillante)\r");
-            sb.append("• <b>red / rojo</b> (Rojo pasión)\r");
-            sb.append("• <b>blue / azul</b> (Azul zafiro)\r");
-            sb.append("• <b>green / verde</b> (Verde esmeralda)\r");
-            sb.append("• <b>purple / morado</b> (Púrpura real)\r");
-            sb.append("• <b>pink / rosa</b> (Rosa chicle)\r");
-            sb.append("• <b>cyan / celeste</b> (Cian eléctrico)\r");
-            sb.append("• <b>orange / naranja</b> (Naranja intenso)\r");
-            sb.append("• <b>lime / lima</b> (Verde lima)\r");
-            sb.append("• <b>yellow / amarillo</b> (Amarillo solar)\r");
-            sb.append("• <b>silver / plata</b> (Plateado elegante)\r\r");
-            sb.append("Uso: <code>:namecolour [color]</code>\r");
-            sb.append("Para restablecer: <code>:namecolour reset</code>");
+            sb.append("<b>🎨 Tus Colores de Nombre Disponibles (Habbten VIP):</b>\r\r");
+            
+            for (Map.Entry<String, String> entry : COLOURS.entrySet()) {
+                String colorName = entry.getKey();
+                String hex = entry.getValue();
+                boolean isActive = activeColor != null && (activeColor.equalsIgnoreCase(hex) || (activeColor.equalsIgnoreCase("rainbow") && hex.equalsIgnoreCase("rainbow")));
+                
+                sb.append("• <b>").append(colorName).append("</b>");
+                if (isActive) {
+                    sb.append(" <i><font color=\"#10b981\">[Equipado actualmente]</font></i>");
+                }
+                sb.append("\r");
+            }
+            
+            sb.append("\r<i>Escribe: <code>:namecolour [color]</code> para equipar.</i>\r");
+            sb.append("<i>Para restablecer al color normal: <code>:namecolour reset</code></i>");
             habbo.alert(sb.toString());
             return true;
         }
