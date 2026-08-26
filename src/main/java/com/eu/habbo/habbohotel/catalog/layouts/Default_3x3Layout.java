@@ -14,7 +14,7 @@ public class Default_3x3Layout extends CatalogPage {
 
     @Override
     public void serialize(ServerMessage message) {
-        message.appendString("default_3x3");
+        message.appendString(this.getLayout() != null ? this.getLayout() : "default_3x3");
         message.appendInt(3);
         message.appendString(super.getHeaderImage());
         message.appendString(super.getTeaserImage());
