@@ -282,6 +282,10 @@ public class CatalogManager {
                     Class<? extends CatalogPage> pageClazz = pageDefinitions.get(set.getString("page_layout"));
 
                     if (pageClazz == null) {
+                        pageClazz = pageDefinitions.get("default_3x3");
+                    }
+
+                    if (pageClazz == null) {
                         LOGGER.info("Unknown Page Layout: " + set.getString("page_layout"));
                         continue;
                     }
