@@ -13,7 +13,8 @@ import java.util.TreeMap;
 
 public class CommandsCommand extends Command {
     private static final Set<String> VIP_COMMAND_KEYS = new HashSet<>(Arrays.asList(
-            "namecolour", "colorname", "namecolor", "colour", "color", "chatcolor"
+            "namecolour", "colorname", "namecolor", "colour", "color", "chatcolor",
+            "prefix", "setprefix", "prefixo", "tag", "corprefixo", "prefixocor", "colorprefix", "prefixcolor"
     ));
 
     public CommandsCommand() {
