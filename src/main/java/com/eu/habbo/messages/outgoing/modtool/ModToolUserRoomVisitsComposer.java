@@ -5,16 +5,16 @@ import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import gnu.trove.set.hash.THashSet;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.TimeZone;
 
 public class ModToolUserRoomVisitsComposer extends MessageComposer {
     private final HabboInfo habboInfo;
-    private final THashSet<ModToolRoomVisit> roomVisits;
+    private final Collection<ModToolRoomVisit> roomVisits;
 
-    public ModToolUserRoomVisitsComposer(HabboInfo habboInfo, THashSet<ModToolRoomVisit> roomVisits) {
+    public ModToolUserRoomVisitsComposer(HabboInfo habboInfo, Collection<ModToolRoomVisit> roomVisits) {
         this.habboInfo = habboInfo;
         this.roomVisits = roomVisits;
     }
@@ -28,10 +28,10 @@ public class ModToolUserRoomVisitsComposer extends MessageComposer {
 
         Calendar cal = Calendar.getInstance(TimeZone.getDefault());
         for (ModToolRoomVisit visit : this.roomVisits) {
-            cal.setTimeInMillis(visit.timestamp * 1000);
+            cal.setTimeInMillis(((long) visit.timestamp) * 1000L);
             this.response.appendInt(visit.roomId);
             this.response.appendString(visit.roomName);
-            this.response.appendInt(cal.get(Calendar.HOUR));
+            this.response.appendInt(cal.get(Calendar.HOUR_OF_DAY));
             this.response.appendInt(cal.get(Calendar.MINUTE));
         }
         return this.response;

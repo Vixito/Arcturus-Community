@@ -280,8 +280,8 @@ public class ModToolManager {
         return chatlogs;
     }
 
-    public THashSet<ModToolRoomVisit> getUserRoomVisits(int userId) {
-        THashSet<ModToolRoomVisit> roomVisits = new THashSet<>();
+    public List<ModToolRoomVisit> getUserRoomVisits(int userId) {
+        List<ModToolRoomVisit> roomVisits = new ArrayList<>();
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT rooms.name, room_enter_log.* FROM room_enter_log INNER JOIN rooms ON rooms.id = room_enter_log.room_id WHERE user_id = ? ORDER BY timestamp DESC LIMIT 50")) {
             statement.setInt(1, userId);
