@@ -269,6 +269,10 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_cnd_not_user_count", WiredConditionNotHabboCount.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_not_wearing_fx", WiredConditionNotHabboHasEffect.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_not_wearing_b", WiredConditionNotHabboWearsBadge.class));
+        this.interactionsList.add(new ItemInteraction("wf_cnd_not_habbo_owns_badge", WiredConditionNotHabboWearsBadge.class));
+        this.interactionsList.add(new ItemInteraction("wf_cnd_user_performs_action", WiredConditionUserPerformsAction.class));
+        this.interactionsList.add(new ItemInteraction("wf_cnd_not_user_performs_action", WiredConditionNotUserPerformsAction.class));
+        this.interactionsList.add(new ItemInteraction("wf_cnd_slc_quantity", WiredConditionSlcQuantity.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_not_in_group", WiredConditionNotInGroup.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_not_in_team", WiredConditionNotInTeam.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_not_match_snap", WiredConditionNotMatchStatePosition.class));
