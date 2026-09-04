@@ -4,6 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUserAction;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
+import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserActionComposer;
 import com.eu.habbo.plugin.events.users.UserIdleEvent;
@@ -51,6 +53,7 @@ public class RoomUserActionEvent extends MessageHandler {
             }
 
             room.sendComposer(new RoomUserActionComposer(habbo.getRoomUnit(), RoomUserAction.fromValue(action)).compose());
+            WiredHandler.handle(WiredTriggerType.USER_PERFORMS_ACTION, habbo.getRoomUnit(), room, new Object[]{ action });
         }
     }
 }

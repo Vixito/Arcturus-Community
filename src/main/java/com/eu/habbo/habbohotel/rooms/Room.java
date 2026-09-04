@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.rooms.variables.RoomVariableManager;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.bots.VisitorBot;
@@ -211,6 +212,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     private volatile boolean muted;
     private RoomSpecialTypes roomSpecialTypes;
     private TraxManager traxManager;
+    private RoomVariableManager roomVariableManager;
     private boolean cycleOdd;
     private long cycleTimestamp;
 
@@ -317,6 +319,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 }
 
                 this.roomSpecialTypes = new RoomSpecialTypes();
+                this.roomVariableManager = new RoomVariableManager(this);
+                this.roomVariableManager.load();
 
                 try {
                     this.loadLayout();
@@ -931,6 +935,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
                     if (this.roomSpecialTypes != null) {
                         this.roomSpecialTypes.dispose();
+                    }
+
+                    if (this.roomVariableManager != null) {
+                        this.roomVariableManager.dispose();
                     }
 
                     synchronized (this.roomItems) {
@@ -1575,17 +1583,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
                         return true;
                     });
-
-
-                    int currentTime = (int) (this.cycleTimestamp / 1000);
-                    for (HabboItem pyramid : this.roomSpecialTypes.getItemsOfType(InteractionPyramid.class)) {
-                        if (pyramid instanceof InteractionPyramid) {
-
-                            if (((InteractionPyramid) pyramid).getNextChange() < currentTime) {
-                                ((InteractionPyramid) pyramid).change(this);
-                            }
-                        }
-                    }
                 } else {
                     this.rollerCycle++;
                 }
@@ -2680,6 +2677,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void removeHabbo(Habbo habbo, boolean sendRemovePacket) {
+        if (habbo.getRoomUnit() != null) {
+            WiredHandler.handle(WiredTriggerType.LEAVE_ROOM, habbo.getRoomUnit(), this, new Object[]{ habbo });
+        }
+
         if (habbo.getRoomUnit() != null && habbo.getRoomUnit().getCurrentLocation() != null) {
             habbo.getRoomUnit().getCurrentLocation().removeUnit(habbo.getRoomUnit());
         }
@@ -4880,5 +4881,13 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     public Collection<RoomUnit> getRoomUnitsAt(RoomTile tile) {
         THashSet<RoomUnit> roomUnits = getRoomUnits();
         return roomUnits.stream().filter(unit -> unit.getCurrentLocation() == tile).collect(Collectors.toSet());
+    }
+
+    public RoomVariableManager getVariableManager() {
+        if (this.roomVariableManager == null) {
+            this.roomVariableManager = new RoomVariableManager(this);
+            this.roomVariableManager.load();
+        }
+        return this.roomVariableManager;
     }
 }

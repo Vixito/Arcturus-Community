@@ -24,7 +24,8 @@ public enum WiredConditionType {
     NOT_ACTOR_WEARS_BADGE(22),
     NOT_ACTOR_WEARS_EFFECT(23),
     DATE_RANGE(24),
-    ACTOR_HAS_HANDITEM(25);
+    ACTOR_HAS_HANDITEM(25),
+    VARIABLE_VALUE_MATCH(26);
 
     public final int code;
 

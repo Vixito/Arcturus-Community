@@ -3,6 +3,8 @@ package com.eu.habbo.messages.incoming.rooms.users;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
+import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDanceComposer;
 import com.eu.habbo.plugin.events.users.UserIdleEvent;
@@ -39,6 +41,9 @@ public class RoomUserDanceEvent extends MessageHandler {
                 }
 
                 this.client.getHabbo().getHabboInfo().getCurrentRoom().dance(habbo, DanceType.values()[danceId]);
+                if (danceId > 0) {
+                    WiredHandler.handle(WiredTriggerType.USER_PERFORMS_ACTION, habbo.getRoomUnit(), this.client.getHabbo().getHabboInfo().getCurrentRoom(), new Object[]{ 8 });
+                }
             }
         }
     }

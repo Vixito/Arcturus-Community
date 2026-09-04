@@ -1,7 +1,5 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
-import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 
@@ -9,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class InteractionPyramid extends InteractionGate {
-    private int nextChange;
 
     public InteractionPyramid(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -29,23 +26,19 @@ public class InteractionPyramid extends InteractionGate {
                 state = Math.abs(state - 1);
 
                 this.setExtradata(state + "");
+                room.updateTile(room.getLayout().getTile(this.getX(), this.getY()));
+                this.needsUpdate(true);
                 room.updateItemState(this);
-
-                this.nextChange = Emulator.getIntUnixTimestamp() + 1 + (Emulator.getRandom().nextInt(Emulator.getConfig().getInt("pyramids.max.delay")));
             }
         }
     }
 
     public int getNextChange() {
-        return this.nextChange;
-    }
-
-    @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+        return Integer.MAX_VALUE;
     }
 
     @Override
     public boolean isUsable() {
-        return false;
+        return true;
     }
 }

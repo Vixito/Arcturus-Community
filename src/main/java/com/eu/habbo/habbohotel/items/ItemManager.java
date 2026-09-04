@@ -240,6 +240,18 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_act_alert", WiredEffectAlert.class));
         this.interactionsList.add(new ItemInteraction("wf_act_give_handitem", WiredEffectGiveHandItem.class));
         this.interactionsList.add(new ItemInteraction("wf_act_give_effect", WiredEffectGiveEffect.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_change_var_val", WiredEffectChangeVariableValue.class));
+        this.interactionsList.add(new ItemInteraction("wf_var_room", WiredEffectChangeVariableValue.class));
+        this.interactionsList.add(new ItemInteraction("wf_var_user", WiredEffectChangeVariableValue.class));
+        this.interactionsList.add(new ItemInteraction("wf_cnd_var_val_match", WiredConditionVariableValueMatch.class));
+        this.interactionsList.add(new ItemInteraction("wf_trg_var_changed", WiredTriggerVariableChanged.class));
+        this.interactionsList.add(new ItemInteraction("wf_trg_user_performs_action", WiredTriggerUserPerformsAction.class));
+        this.interactionsList.add(new ItemInteraction("wf_trg_click_furni", WiredTriggerClickFurni.class));
+        this.interactionsList.add(new ItemInteraction("wf_trg_click_tile", WiredTriggerClickTile.class));
+        this.interactionsList.add(new ItemInteraction("wf_trg_leave_room", WiredTriggerLeaveRoom.class));
+        this.interactionsList.add(new ItemInteraction("wf_trg_onsay", WiredTriggerHabboSaysKeyword.class));
+        this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_owns_badge", WiredConditionHabboWearsBadge.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_give_credits", WiredEffectGiveReward.class));
 
         this.interactionsList.add(new ItemInteraction("wf_cnd_has_furni_on", WiredConditionFurniHaveFurni.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_furnis_hv_avtrs", WiredConditionFurniHaveHabbo.class));

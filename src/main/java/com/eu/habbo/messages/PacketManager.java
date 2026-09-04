@@ -429,6 +429,7 @@ public class PacketManager {
         this.registerHandler(Incoming.PostItRequestDataEvent, PostItRequestDataEvent.class);
         this.registerHandler(Incoming.PostItSaveDataEvent, PostItSaveDataEvent.class);
         this.registerHandler(Incoming.PostItDeleteEvent, PostItDeleteEvent.class);
+        this.registerHandler(Incoming.ClickFurniEvent, RoomUserClickFurniEvent.class);
         this.registerHandler(Incoming.MoodLightSaveSettingsEvent, MoodLightSaveSettingsEvent.class);
         this.registerHandler(Incoming.RentSpaceEvent, RentSpaceEvent.class);
         this.registerHandler(Incoming.RentSpaceCancelEvent, RentSpaceCancelEvent.class);

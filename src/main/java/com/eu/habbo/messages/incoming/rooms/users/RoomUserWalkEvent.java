@@ -12,6 +12,8 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUnitOnRollerComposer;
 import com.eu.habbo.plugin.events.users.UserIdleEvent;
 import gnu.trove.set.hash.THashSet;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
+import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,6 +97,15 @@ public class RoomUserWalkEvent extends MessageHandler {
                         // this should never happen, if it does it would be a design flaw
                         if (tile == null) {
                             return;
+                        }
+
+                        WiredHandler.handle(WiredTriggerType.CLICK_TILE, roomUnit, room, new Object[]{ tile });
+
+                        THashSet<HabboItem> itemsAtTile = room.getItemsAt(tile);
+                        if (itemsAtTile != null && itemsAtTile.size() > 0) {
+                            for (HabboItem itemAtTile : itemsAtTile) {
+                                WiredHandler.handle(WiredTriggerType.CLICK_FURNI, roomUnit, room, new Object[]{ itemAtTile });
+                            }
                         }
 
                         // Don't care
