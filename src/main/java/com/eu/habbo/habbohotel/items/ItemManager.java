@@ -252,6 +252,8 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_trg_onsay", WiredTriggerHabboSaysKeyword.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_owns_badge", WiredConditionHabboWearsBadge.class));
         this.interactionsList.add(new ItemInteraction("wf_act_give_credits", WiredEffectGiveReward.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_teleport_to_room", WiredEffectTeleportToRoom.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_click_conf", WiredEffectClickConf.class));
 
         this.interactionsList.add(new ItemInteraction("wf_cnd_has_furni_on", WiredConditionFurniHaveFurni.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_furnis_hv_avtrs", WiredConditionFurniHaveHabbo.class));

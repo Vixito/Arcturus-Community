@@ -27,7 +27,9 @@ public enum WiredEffectType {
     BOT_FOLLOW_AVATAR(25),
     BOT_CLOTHES(26),
     BOT_TALK_TO_AVATAR(27),
-    SET_VARIABLE_VALUE(28);
+    SET_VARIABLE_VALUE(28),
+    TELEPORT_TO_ROOM(29),
+    CLICK_CONF(30);
 
     public final int code;
 
