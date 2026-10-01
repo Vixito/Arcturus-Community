@@ -8,6 +8,9 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.rooms.variables.InternalVariableEvaluator;
+import com.eu.habbo.habbohotel.rooms.variables.RoomVariable;
+import com.eu.habbo.habbohotel.rooms.variables.VariableScope;
 import com.eu.habbo.habbohotel.wired.WiredChangeDirectionSetting;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
@@ -22,6 +25,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class WiredEffectWhisper extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.SHOW_MESSAGE;
@@ -92,6 +97,49 @@ public class WiredEffectWhisper extends InteractionWiredEffect {
         return true;
     }
 
+    protected String formatMessage(String rawMessage, Room room, RoomUnit roomUnit, Habbo habbo, Object[] stuff) {
+        if (rawMessage == null || rawMessage.isEmpty()) return "";
+        String formatted = rawMessage;
+
+        String username = habbo != null ? habbo.getHabboInfo().getUsername() : (roomUnit != null ? "Unit_" + roomUnit.getId() : "Guest");
+        formatted = formatted.replace("%user%", username)
+                .replace("%username%", username)
+                .replace("%online_count%", Emulator.getGameEnvironment().getHabboManager().getOnlineCount() + "")
+                .replace("%online%", Emulator.getGameEnvironment().getHabboManager().getOnlineCount() + "")
+                .replace("%room_count%", Emulator.getGameEnvironment().getRoomManager().getActiveRooms().size() + "")
+                .replace("%roomsloaded%", Emulator.getGameEnvironment().getRoomManager().loadedRoomsCount() + "");
+
+        if (formatted.contains("$(") && room != null && room.getVariableManager() != null) {
+            Pattern pattern = Pattern.compile("\\$\\(([^)]+)\\)");
+            Matcher matcher = pattern.matcher(formatted);
+            StringBuffer sb = new StringBuffer();
+            while (matcher.find()) {
+                String varName = matcher.group(1).trim();
+                String val = null;
+                if (varName.startsWith("@")) {
+                    com.eu.habbo.habbohotel.users.HabboItem furni = (stuff != null && stuff.length > 0 && stuff[0] instanceof com.eu.habbo.habbohotel.users.HabboItem) ? (com.eu.habbo.habbohotel.users.HabboItem) stuff[0] : null;
+                    val = String.valueOf(InternalVariableEvaluator.get(varName, room, habbo, roomUnit, furni));
+                } else {
+                    RoomVariable v = room.getVariableManager().getRoomVariable(varName, 0, VariableScope.CONTEXT);
+                    if (v == null && habbo != null) {
+                        v = room.getVariableManager().getRoomVariable(varName, habbo.getHabboInfo().getId(), VariableScope.USER);
+                    }
+                    if (v == null) {
+                        v = room.getVariableManager().getRoomVariable(varName, room.getId(), VariableScope.ROOM);
+                    }
+                    if (v != null && v.hasValue()) {
+                        val = String.valueOf(v.getValue());
+                    }
+                }
+                matcher.appendReplacement(sb, Matcher.quoteReplacement(val != null ? val : "0"));
+            }
+            matcher.appendTail(sb);
+            formatted = sb.toString();
+        }
+
+        return formatted;
+    }
+
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         if (this.message.length() > 0) {
@@ -99,7 +147,7 @@ public class WiredEffectWhisper extends InteractionWiredEffect {
                 Habbo habbo = room.getHabbo(roomUnit);
 
                 if (habbo != null) {
-                    String msg = this.message.replace("%user%", habbo.getHabboInfo().getUsername()).replace("%online_count%", Emulator.getGameEnvironment().getHabboManager().getOnlineCount() + "").replace("%room_count%", Emulator.getGameEnvironment().getRoomManager().getActiveRooms().size() + "");
+                    String msg = this.formatMessage(this.message, room, roomUnit, habbo, stuff);
                     habbo.getClient().sendResponse(new RoomUserWhisperComposer(new RoomChatMessage(msg, habbo, habbo, RoomChatMessageBubbles.WIRED)));
                     Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, roomUnit, room, new Object[]{ msg }));
 
@@ -110,7 +158,8 @@ public class WiredEffectWhisper extends InteractionWiredEffect {
                 }
             } else {
                 for (Habbo h : room.getHabbos()) {
-                    h.getClient().sendResponse(new RoomUserWhisperComposer(new RoomChatMessage(this.message.replace("%user%", h.getHabboInfo().getUsername()).replace("%online_count%", Emulator.getGameEnvironment().getHabboManager().getOnlineCount() + "").replace("%room_count%", Emulator.getGameEnvironment().getRoomManager().getActiveRooms().size() + ""), h, h, RoomChatMessageBubbles.WIRED)));
+                    String msg = this.formatMessage(this.message, room, roomUnit, h, stuff);
+                    h.getClient().sendResponse(new RoomUserWhisperComposer(new RoomChatMessage(msg, h, h, RoomChatMessageBubbles.WIRED)));
                 }
 
                 return true;

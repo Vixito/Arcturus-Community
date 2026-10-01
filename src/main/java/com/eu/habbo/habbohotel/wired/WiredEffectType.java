@@ -29,7 +29,11 @@ public enum WiredEffectType {
     BOT_TALK_TO_AVATAR(27),
     SET_VARIABLE_VALUE(28),
     TELEPORT_TO_ROOM(29),
-    CLICK_CONF(30);
+    CLICK_CONF(30),
+    GIVE_VARIABLE(31),
+    REMOVE_VARIABLE(32),
+    MOVE_ROTATE_USER(33),
+    USER_TO_FURNI(34);
 
     public final int code;
 

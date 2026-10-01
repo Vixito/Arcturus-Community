@@ -10,6 +10,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredTriggerReset;
 import com.eu.habbo.habbohotel.items.interactions.wired.effects.WiredEffectGiveReward;
 import com.eu.habbo.habbohotel.items.interactions.wired.effects.WiredEffectTriggerStacks;
+import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredExtraExecuteInOrder;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredExtraRandom;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredExtraUnseen;
 import com.eu.habbo.habbohotel.rooms.Room;
@@ -191,6 +192,7 @@ public class WiredHandler {
 
             boolean hasExtraRandom = room.getRoomSpecialTypes().hasExtraType(trigger.getX(), trigger.getY(), WiredExtraRandom.class);
             boolean hasExtraUnseen = room.getRoomSpecialTypes().hasExtraType(trigger.getX(), trigger.getY(), WiredExtraUnseen.class);
+            boolean hasExtraExecuteInOrder = room.getRoomSpecialTypes().hasExtraType(trigger.getX(), trigger.getY(), WiredExtraExecuteInOrder.class);
             THashSet<InteractionWiredExtra> extras = room.getRoomSpecialTypes().getExtras(trigger.getX(), trigger.getY());
 
             for (InteractionWiredExtra extra : extras) {
@@ -199,7 +201,9 @@ public class WiredHandler {
 
             List<InteractionWiredEffect> effectList = new ArrayList<>(effects);
 
-            if (hasExtraRandom || hasExtraUnseen) {
+            if (hasExtraExecuteInOrder) {
+                effectList.sort(java.util.Comparator.comparingDouble(HabboItem::getZ));
+            } else if (hasExtraRandom || hasExtraUnseen) {
                 Collections.shuffle(effectList);
             }
 

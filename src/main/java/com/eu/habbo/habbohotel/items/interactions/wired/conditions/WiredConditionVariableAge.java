@@ -1,6 +1,5 @@
 package com.eu.habbo.habbohotel.items.interactions.wired.conditions;
 
-import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
 import com.eu.habbo.habbohotel.rooms.Room;
@@ -12,24 +11,24 @@ import com.eu.habbo.habbohotel.wired.WiredConditionType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredConditionVariableValueMatch extends InteractionWiredCondition {
-    public static final WiredConditionType type = WiredConditionType.VARIABLE_VALUE_MATCH;
+public class WiredConditionVariableAge extends InteractionWiredCondition {
+    public static final WiredConditionType type = WiredConditionType.VARIABLE_AGE_MATCH;
 
     private String variableName = "";
-    private int comparison = 0; // 0: Equal, 1: Not Equal, 2: Greater, 3: Less, 4: Greater Equal, 5: Less Equal
-    private int targetValue = 0;
-    private int scope = 0; // 0: Room, 1: User, 2: Furni, 3: Context, 4: Cross-Room
+    private int scope = 1; // 1: User, 2: Furni
+    private int ageType = 0; // 0: Creation age, 1: Last update age
+    private int comparison = 2; // 0: <, 1: <=, 2: ==, 3: >=, 4: >
+    private int targetSeconds = 0;
 
-    public WiredConditionVariableValueMatch(ResultSet set, Item baseItem) throws SQLException {
+    public WiredConditionVariableAge(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredConditionVariableValueMatch(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
+    public WiredConditionVariableAge(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
@@ -40,11 +39,9 @@ public class WiredConditionVariableValueMatch extends InteractionWiredCondition 
 
         VariableScope varScope = VariableScope.fromCode(this.scope);
         int entityId = 0;
-        Habbo habbo = null;
-        HabboItem targetItem = null;
 
         if (roomUnit != null) {
-            habbo = room.getHabbo(roomUnit);
+            Habbo habbo = room.getHabbo(roomUnit);
             if (habbo != null) {
                 entityId = habbo.getHabboInfo().getId();
             }
@@ -53,36 +50,29 @@ public class WiredConditionVariableValueMatch extends InteractionWiredCondition 
         if (varScope == VariableScope.FURNI && stuff != null) {
             for (Object obj : stuff) {
                 if (obj instanceof HabboItem) {
-                    targetItem = (HabboItem) obj;
-                    entityId = targetItem.getId();
+                    entityId = ((HabboItem) obj).getId();
                     break;
                 }
             }
         }
 
-        int current = room.getVariableManager().getVariable(this.variableName, entityId, varScope, habbo, roomUnit, targetItem);
+        long age = room.getVariableManager().getVariableAgeSeconds(this.variableName, entityId, varScope, this.ageType == 0);
 
         switch (this.comparison) {
-            case 0: // ==
-                return current == this.targetValue;
-            case 1: // !=
-                return current != this.targetValue;
-            case 2: // >
-                return current > this.targetValue;
-            case 3: // <
-                return current < this.targetValue;
-            case 4: // >=
-                return current >= this.targetValue;
-            case 5: // <=
-                return current <= this.targetValue;
-            default:
-                return current == this.targetValue;
+            case 0: return age < this.targetSeconds;
+            case 1: return age <= this.targetSeconds;
+            case 2: return age == this.targetSeconds;
+            case 3: return age >= this.targetSeconds;
+            case 4: return age > this.targetSeconds;
+            default: return age >= this.targetSeconds;
         }
     }
 
     @Override
     public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.variableName, this.comparison, this.targetValue, this.scope));
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.variableName, this.scope, this.ageType, this.comparison, this.targetSeconds
+        ));
     }
 
     @Override
@@ -92,9 +82,10 @@ public class WiredConditionVariableValueMatch extends InteractionWiredCondition 
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
             if (data != null) {
                 this.variableName = data.variableName != null ? data.variableName : "";
-                this.comparison = data.comparison;
-                this.targetValue = data.targetValue;
                 this.scope = data.scope;
+                this.ageType = data.ageType;
+                this.comparison = data.comparison;
+                this.targetSeconds = data.targetSeconds;
             }
         }
     }
@@ -102,59 +93,65 @@ public class WiredConditionVariableValueMatch extends InteractionWiredCondition 
     @Override
     public void onPickUp() {
         this.variableName = "";
-        this.comparison = 0;
-        this.targetValue = 0;
-        this.scope = 0;
+        this.scope = 1;
+        this.ageType = 0;
+        this.comparison = 2;
+        this.targetSeconds = 0;
     }
 
     @Override
     public WiredConditionType getType() {
-        return WiredConditionVariableValueMatch.type;
+        return WiredConditionVariableAge.type;
     }
 
     @Override
     public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(5);
-        message.appendInt(0); // furni selection count
+        message.appendInt(0); // selected furni count
         message.appendInt(this.getBaseItem().getSpriteId());
         message.appendInt(this.getId());
         message.appendString(this.variableName);
-        message.appendInt(3); // int count
-        message.appendInt(this.comparison);
-        message.appendInt(this.targetValue);
+        message.appendInt(4); // int params count
         message.appendInt(this.scope);
+        message.appendInt(this.ageType);
+        message.appendInt(this.comparison);
+        message.appendInt(this.targetSeconds);
         message.appendInt(0);
         message.appendInt(this.getType().code);
+        message.appendInt(0);
+        message.appendInt(0);
     }
 
     @Override
     public boolean saveData(ClientMessage packet) {
         packet.readInt(); // furni count
-        int intParamsCount = packet.readInt();
-        if (intParamsCount >= 3) {
-            this.comparison = packet.readInt();
-            this.targetValue = packet.readInt();
-            this.scope = packet.readInt();
-        } else if (intParamsCount >= 2) {
-            this.comparison = packet.readInt();
-            this.targetValue = packet.readInt();
-        }
         this.variableName = packet.readString();
+
+        int intCount = packet.readInt();
+        if (intCount >= 4) {
+            this.scope = packet.readInt();
+            this.ageType = packet.readInt();
+            this.comparison = packet.readInt();
+            this.targetSeconds = packet.readInt();
+        }
+
         return true;
     }
 
     static class JsonData {
         String variableName;
-        int comparison;
-        int targetValue;
         int scope;
+        int ageType;
+        int comparison;
+        int targetSeconds;
 
-        public JsonData(String variableName, int comparison, int targetValue, int scope) {
+        public JsonData(String variableName, int scope, int ageType, int comparison, int targetSeconds) {
             this.variableName = variableName;
-            this.comparison = comparison;
-            this.targetValue = targetValue;
             this.scope = scope;
+            this.ageType = ageType;
+            this.comparison = comparison;
+            this.targetSeconds = targetSeconds;
         }
     }
 }

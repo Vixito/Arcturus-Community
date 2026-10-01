@@ -17,19 +17,17 @@ import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredEffectChangeVariableValue extends InteractionWiredEffect {
-    public static final WiredEffectType type = WiredEffectType.SET_VARIABLE_VALUE;
+public class WiredEffectRemoveVariable extends InteractionWiredEffect {
+    public static final WiredEffectType type = WiredEffectType.REMOVE_VARIABLE;
 
     private String variableName = "";
-    private int operation = 1; // 0: Set, 1: Add, 2: Subtract, 3: Multiply, 4: Divide, 5: Random, 6: Modulo, 7: Power
-    private int operand = 1;
-    private int scope = 0; // 0: Room, 1: User, 2: Furni, 3: Context, 4: Cross-Room
+    private int scope = 1; // 1: User, 2: Furni
 
-    public WiredEffectChangeVariableValue(ResultSet set, Item baseItem) throws SQLException {
+    public WiredEffectRemoveVariable(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredEffectChangeVariableValue(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
+    public WiredEffectRemoveVariable(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
@@ -40,11 +38,9 @@ public class WiredEffectChangeVariableValue extends InteractionWiredEffect {
 
         VariableScope varScope = VariableScope.fromCode(this.scope);
         int entityId = 0;
-        Habbo habbo = null;
-        HabboItem targetItem = null;
 
         if (roomUnit != null) {
-            habbo = room.getHabbo(roomUnit);
+            Habbo habbo = room.getHabbo(roomUnit);
             if (habbo != null) {
                 entityId = habbo.getHabboInfo().getId();
             }
@@ -53,20 +49,19 @@ public class WiredEffectChangeVariableValue extends InteractionWiredEffect {
         if (varScope == VariableScope.FURNI && stuff != null) {
             for (Object obj : stuff) {
                 if (obj instanceof HabboItem) {
-                    targetItem = (HabboItem) obj;
-                    entityId = targetItem.getId();
+                    entityId = ((HabboItem) obj).getId();
                     break;
                 }
             }
         }
 
-        room.getVariableManager().modifyVariable(this.variableName, entityId, varScope, this.operation, this.operand, roomUnit, habbo, targetItem);
+        room.getVariableManager().removeVariable(this.variableName, entityId, varScope);
         return true;
     }
 
     @Override
     public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.variableName, this.operation, this.operand, this.scope, this.getDelay()));
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.variableName, this.scope, this.getDelay()));
     }
 
     @Override
@@ -76,8 +71,6 @@ public class WiredEffectChangeVariableValue extends InteractionWiredEffect {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
             if (data != null) {
                 this.variableName = data.variableName != null ? data.variableName : "";
-                this.operation = data.operation;
-                this.operand = data.operand;
                 this.scope = data.scope;
                 this.setDelay(data.delay);
             }
@@ -87,15 +80,13 @@ public class WiredEffectChangeVariableValue extends InteractionWiredEffect {
     @Override
     public void onPickUp() {
         this.variableName = "";
-        this.operation = 1;
-        this.operand = 1;
-        this.scope = 0;
+        this.scope = 1;
         this.setDelay(0);
     }
 
     @Override
     public WiredEffectType getType() {
-        return WiredEffectChangeVariableValue.type;
+        return WiredEffectRemoveVariable.type;
     }
 
     @Override
@@ -106,9 +97,7 @@ public class WiredEffectChangeVariableValue extends InteractionWiredEffect {
         message.appendInt(this.getBaseItem().getSpriteId());
         message.appendInt(this.getId());
         message.appendString(this.variableName);
-        message.appendInt(3); // int params count
-        message.appendInt(this.operation);
-        message.appendInt(this.operand);
+        message.appendInt(1); // int params count
         message.appendInt(this.scope);
         message.appendInt(0);
         message.appendInt(this.getType().code);
@@ -122,13 +111,8 @@ public class WiredEffectChangeVariableValue extends InteractionWiredEffect {
         this.variableName = packet.readString();
 
         int intCount = packet.readInt();
-        if (intCount >= 3) {
-            this.operation = packet.readInt();
-            this.operand = packet.readInt();
+        if (intCount >= 1) {
             this.scope = packet.readInt();
-        } else if (intCount >= 2) {
-            this.operation = packet.readInt();
-            this.operand = packet.readInt();
         }
 
         this.setDelay(packet.readInt());
@@ -137,15 +121,11 @@ public class WiredEffectChangeVariableValue extends InteractionWiredEffect {
 
     static class JsonData {
         String variableName;
-        int operation;
-        int operand;
         int scope;
         int delay;
 
-        public JsonData(String variableName, int operation, int operand, int scope, int delay) {
+        public JsonData(String variableName, int scope, int delay) {
             this.variableName = variableName;
-            this.operation = operation;
-            this.operand = operand;
             this.scope = scope;
             this.delay = delay;
         }
