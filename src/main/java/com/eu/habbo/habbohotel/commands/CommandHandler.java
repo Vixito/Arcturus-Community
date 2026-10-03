@@ -247,6 +247,7 @@ public class CommandHandler {
         addCommand(new HandItemCommand());
         addCommand(new HappyHourCommand());
         addCommand(new HideWiredCommand());
+        addCommand(new WiredCommand());
         addCommand(new HotelAlertCommand());
         addCommand(new HotelAlertLinkCommand());
         addCommand(new InvisibleCommand());

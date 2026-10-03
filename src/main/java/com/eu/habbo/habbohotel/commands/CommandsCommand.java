@@ -103,6 +103,7 @@ public class CommandsCommand extends Command {
                     else if (key.equals("setmax")) description = "Cambia el límite de usuarios de tu sala. (Requiere derechos)";
                     else if (key.equals("setspeed")) description = "Ajusta la velocidad de los rollers en tu sala. (Requiere derechos)";
                     else if (key.equals("hidewired")) description = "Oculta o muestra los wireds en tu sala. (Requiere derechos)";
+                    else if (key.equals("wired") || key.equals("wf")) description = "Abre las herramientas de creación Wired (Wired Creator Tools). Uso: :wired";
                     else if (key.equals("reload") || key.equals("reload_room")) description = "Recarga la sala actual. (Requiere derechos)";
                     else if (key.equals("pickall")) description = "Recoge todos tus furnis en la sala. (Requiere ser dueño)";
                     else if (key.equals("ejectall")) description = "Expulsa los furnis de otros en tu sala. (Requiere ser dueño)";
