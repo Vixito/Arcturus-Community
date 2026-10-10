@@ -269,6 +269,7 @@ public class CommandHandler {
         addCommand(new NameColourCommand());
         addCommand(new PetInfoCommand());
         addCommand(new PickallCommand());
+        addCommand(new PickWiredCommand());
         addCommand(new PixelCommand());
         addCommand(new PluginsCommand());
         addCommand(new PointsCommand());

@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,9 +26,6 @@ public class CommandsCommand extends Command {
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
         int userRank = gameClient.getHabbo().getHabboInfo().getRank().getId();
         List<Command> commands = Emulator.getGameEnvironment().getCommandHandler().getCommandsForRank(userRank);
-
-        List<String> messageList = new ArrayList<>();
-        messageList.add("<b>" + Emulator.getTexts().getValue("commands.generic.cmd_commands.text", "Lista de Comandos") + " (" + commands.size() + "):</b><div class=\"is-commands-list\" style=\"display:none;\"></div>");
 
         String searchFilter = params.length > 1 ? params[1].toLowerCase() : null;
 
@@ -64,6 +62,34 @@ public class CommandsCommand extends Command {
             }
         }
 
+        // Comandos especiales de cliente
+        userCmds.add(new Command("cmd_emoji", new String[] { "emoji" }) {
+            @Override
+            public boolean handle(GameClient gameClient, String[] params) { return true; }
+        });
+        userCmds.add(new Command("cmd_gif", new String[] { "gif" }) {
+            @Override
+            public boolean handle(GameClient gameClient, String[] params) { return true; }
+        });
+
+        // Ordenar alfabéticamente A-Z todos los comandos por su clave principal
+        Comparator<Command> commandComparator = Comparator.comparing(
+                c -> (c.keys != null && c.keys.length > 0) ? c.keys[0].toLowerCase() : ""
+        );
+        userCmds.sort(commandComparator);
+        vipCmds.sort(commandComparator);
+        for (List<Command> sCmds : staffCmds.values()) {
+            sCmds.sort(commandComparator);
+        }
+
+        int totalAccessible = userCmds.size() + vipCmds.size();
+        for (List<Command> sCmds : staffCmds.values()) {
+            totalAccessible += sCmds.size();
+        }
+
+        List<String> messageList = new ArrayList<>();
+        messageList.add("<b>" + Emulator.getTexts().getValue("commands.generic.cmd_commands.text", "Lista de Comandos") + " (" + totalAccessible + "):</b><div class=\"is-commands-list\" style=\"display:none;\"></div>");
+
         // 1. Categoría Usuario
         renderCategory(messageList, "Usuario", userCmds, searchFilter, "#0284c7");
 
@@ -95,7 +121,9 @@ public class CommandsCommand extends Command {
             if (description == null || description.isEmpty() || description.equals("Sin descripción")) {
                 if (c.keys != null && c.keys.length > 0) {
                     String key = c.keys[0].toLowerCase();
-                    if (key.equals("kiss")) description = "Besa a otro usuario cercano. Uso: :kiss [usuario]";
+                    if (key.equals("emoji")) description = "Envía un emoji en el chat por número o texto. Uso: :emoji [1-20 o texto] (ej: :emoji 4 o :emoji fuego)";
+                    else if (key.equals("gif")) description = "Envía un GIF en el chat con enlace seguro. Uso: :gif [url] (Giphy, Tenor, Imgur, Discord)";
+                    else if (key.equals("kiss")) description = "Besa a otro usuario cercano. Uso: :kiss [usuario]";
                     else if (key.equals("hug")) description = "Abraza a otro usuario cercano. Uso: :hug [usuario]";
                     else if (key.equals("slap")) description = "Le da una bofetada a un usuario cercano. Uso: :slap [usuario]";
                     else if (key.equals("kill")) description = "Derrota a un usuario y lo tumba al suelo. Uso: :kill [usuario]";
@@ -106,6 +134,7 @@ public class CommandsCommand extends Command {
                     else if (key.equals("wired") || key.equals("wf")) description = "Abre las herramientas de creación Wired (Wired Creator Tools). Uso: :wired";
                     else if (key.equals("reload") || key.equals("reload_room")) description = "Recarga la sala actual. (Requiere derechos)";
                     else if (key.equals("pickall")) description = "Recoge todos tus furnis en la sala. (Requiere ser dueño)";
+                    else if (key.equals("pickwired") || key.equals("pickupwired") || key.equals("pickwireds") || key.equals("pickupwireds")) description = "Recoge todos los wireds de la sala a tu inventario. (Requiere ser dueño o tener derechos)";
                     else if (key.equals("ejectall")) description = "Expulsa los furnis de otros en tu sala. (Requiere ser dueño)";
                     else if (key.equals("diagonal")) description = "Activa o desactiva caminar en diagonal en la sala. (Requiere derechos)";
                     else if (key.equals("furni")) description = "Muestra la lista y cantidad de furnis colocados en la sala actual. Uso: :furni";
