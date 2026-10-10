@@ -48,6 +48,22 @@ public class UpdateUser extends RCONMessage<UpdateUser.JSON> {
                     habbo.getHabboStats().blockCameraFollow = json.block_camera_follow == 1;
                 }
 
+                if (json.can_trade != -1) {
+                    habbo.getHabboStats().setAllowTrade(json.can_trade == 1);
+                }
+
+                if (json.block_alerts != -1) {
+                    habbo.getHabboStats().blockStaffAlerts = json.block_alerts == 1;
+                }
+
+                if (json.ignore_bots != -1) {
+                    habbo.getHabboStats().ignoreBots = json.ignore_bots == 1;
+                }
+
+                if (json.ignore_pets != -1) {
+                    habbo.getHabboStats().ignorePets = json.ignore_pets == 1;
+                }
+
                 if (!json.look.isEmpty()) {
                     habbo.getHabboInfo().setLook(json.look);
                     if (habbo.getClient() != null) {
@@ -135,7 +151,10 @@ public class UpdateUser extends RCONMessage<UpdateUser.JSON> {
 
 
         public int block_camera_follow = -1;
-
+        public int can_trade = -1;
+        public int block_alerts = -1;
+        public int ignore_bots = -1;
+        public int ignore_pets = -1;
 
         public String look = "";
 
