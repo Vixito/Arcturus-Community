@@ -50,6 +50,10 @@ public class NavigatorHotelFilter extends NavigatorFilter {
                 if (!set.getValue().isEmpty()) {
                     RoomCategory category = Emulator.getGameEnvironment().getRoomManager().getCategory(set.getKey());
 
+                    if (category == null) {
+                        category = Emulator.getGameEnvironment().getRoomManager().getCategory(1);
+                    }
+
                     if (category != null) {
                         resultLists.add(new SearchResultList(i, category.getCaptionSave(), category.getCaption(), SearchAction.MORE, habbo.getHabboStats().navigatorWindowSettings.getListModeForCategory(category.getCaptionSave()), habbo.getHabboStats().navigatorWindowSettings.getDisplayModeForCategory(category.getCaptionSave()), set.getValue(), true, showInvisible, DisplayOrder.ACTIVITY, category.getOrder()));
                     }
