@@ -1039,7 +1039,7 @@ public class RoomManager {
         ArrayList<Room> rooms = new ArrayList<>();
 
         for (Room room : this.activeRooms.values()) {
-            if (!room.isPublicRoom() && room.getCategory() == category) {
+            if ((!room.isPublicRoom() || RoomManager.SHOW_PUBLIC_IN_POPULAR_TAB) && room.getCategory() == category) {
                 rooms.add(room);
             }
         }
@@ -1057,7 +1057,7 @@ public class RoomManager {
         Map<Integer, List<Room>> rooms = new HashMap<>();
 
         for (Room room : this.activeRooms.values()) {
-            if (!room.isPublicRoom()) {
+            if (!room.isPublicRoom() || RoomManager.SHOW_PUBLIC_IN_POPULAR_TAB) {
                 if (!rooms.containsKey(room.getCategory())) {
                     rooms.put(room.getCategory(), new ArrayList<>());
                 }
