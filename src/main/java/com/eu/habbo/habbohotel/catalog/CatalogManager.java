@@ -346,6 +346,8 @@ public class CatalogManager {
 
     private synchronized void loadCatalogItems() {
         this.clubItems.clear();
+        this.offerDefs.clear();
+        this.spriteDefs.clear();
         catalogItemAmount = 0;
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM catalog_items")) {
@@ -380,9 +382,18 @@ public class CatalogManager {
                     this.offerDefs.put(offerId, item.getId());
                     this.offerDefs.put(item.getId(), item.getId());
                     for (com.eu.habbo.habbohotel.items.Item baseItem : item.getBaseItems()) {
-                        page.addOfferId(baseItem.getSpriteId());
-                        page.addOfferId(baseItem.getId());
-                        this.spriteDefs.put(baseItem.getSpriteId(), item.getId());
+                        int existingItemId = this.spriteDefs.get(baseItem.getSpriteId());
+                        boolean shouldUpdateSprite = (existingItemId == 0);
+                        if (!shouldUpdateSprite) {
+                            CatalogItem existingItem = this.getCatalogItem(existingItemId);
+                            CatalogPage existingPage = existingItem != null ? this.getCatalogPage(existingItem.getPageId()) : null;
+                            if (existingPage == null || (page.isVisible() && !existingPage.isVisible()) || (page.isVisible() == existingPage.isVisible() && page.getRank() < existingPage.getRank())) {
+                                shouldUpdateSprite = true;
+                            }
+                        }
+                        if (shouldUpdateSprite) {
+                            this.spriteDefs.put(baseItem.getSpriteId(), item.getId());
+                        }
                         this.spriteDefs.put(baseItem.getId(), item.getId());
                     }
                 } else

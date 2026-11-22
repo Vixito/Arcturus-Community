@@ -2,35 +2,48 @@ package com.eu.habbo.messages.incoming.catalog;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.catalog.CatalogItem;
+import com.eu.habbo.habbohotel.catalog.CatalogManager;
 import com.eu.habbo.habbohotel.catalog.CatalogPage;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.CatalogSearchResultComposer;
-import gnu.trove.iterator.TIntObjectIterator;
 
 public class CatalogSearchedItemEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
         int offerId = this.packet.readInt();
+        CatalogManager catalogManager = Emulator.getGameEnvironment().getCatalogManager();
 
-        CatalogItem item = Emulator.getGameEnvironment().getCatalogManager().getCatalogItemBySprite(offerId);
+        CatalogItem item = catalogManager.getCatalogItem(offerId);
         if (item == null) {
-            item = Emulator.getGameEnvironment().getCatalogManager().getCatalogItem(offerId);
+            int itemId = catalogManager.offerDefs.get(offerId);
+            if (itemId != 0) {
+                item = catalogManager.getCatalogItem(itemId);
+            }
         }
         if (item == null) {
-            int itemId = Emulator.getGameEnvironment().getCatalogManager().offerDefs.get(offerId);
-            if (itemId != 0) {
-                item = Emulator.getGameEnvironment().getCatalogManager().getCatalogItem(itemId);
-            }
+            item = catalogManager.getCatalogItemBySprite(offerId);
         }
 
         if (item != null) {
-            CatalogPage page = Emulator.getGameEnvironment().getCatalogManager().getCatalogPage(item.getPageId());
-            if (page != null && page.getRank() > this.client.getHabbo().getHabboInfo().getRank().getId()) {
-                return; // User cannot view or buy staff items
+            int userRank = this.client.getHabbo().getHabboInfo().getRank().getId();
+            CatalogPage page = catalogManager.getCatalogPage(item.getPageId());
+            if (page == null) {
+                return;
+            }
+
+            CatalogPage cursor = page;
+            int guard = 0;
+            while (cursor != null && cursor.getId() > 0 && guard++ < 15) {
+                if (!cursor.isVisible() || !cursor.isEnabled() || cursor.getRank() > userRank) {
+                    return; // User cannot view or buy hidden or staff-restricted items
+                }
+                if (cursor.getParentId() <= 0) {
+                    break;
+                }
+                cursor = catalogManager.getCatalogPage(cursor.getParentId());
             }
 
             this.client.sendResponse(new CatalogSearchResultComposer(item));
-            return;
         }
     }
 }

@@ -62,22 +62,33 @@ public class CatalogBuyItemEvent extends MessageHandler {
             if (pageId == -12345678 || pageId == -1) {
                 searchedItem = Emulator.getGameEnvironment().getCatalogManager().getCatalogItem(itemId);
                 if (searchedItem == null) {
-                    searchedItem = Emulator.getGameEnvironment().getCatalogManager().getCatalogItemBySprite(itemId);
-                }
-                if (searchedItem == null) {
                     int realItemId = Emulator.getGameEnvironment().getCatalogManager().offerDefs.get(itemId);
                     if (realItemId != 0) {
                         searchedItem = Emulator.getGameEnvironment().getCatalogManager().getCatalogItem(realItemId);
                     }
+                }
+                if (searchedItem == null) {
+                    searchedItem = Emulator.getGameEnvironment().getCatalogManager().getCatalogItemBySprite(itemId);
                 }
 
                 if (searchedItem != null) {
                     page = Emulator.getGameEnvironment().getCatalogManager().getCatalogPage(searchedItem.getPageId());
 
                     if (page != null) {
-                        if (page.getRank() > this.client.getHabbo().getHabboInfo().getRank().getId()) {
-                            page = null;
-                        } else if (page.getLayout() != null && page.getLayout().equalsIgnoreCase(CatalogPageLayouts.club_gift.name())) {
+                        int userRank = this.client.getHabbo().getHabboInfo().getRank().getId();
+                        CatalogPage cursor = page;
+                        int guard = 0;
+                        while (cursor != null && cursor.getId() > 0 && guard++ < 15) {
+                            if (!cursor.isVisible() || !cursor.isEnabled() || cursor.getRank() > userRank) {
+                                page = null;
+                                break;
+                            }
+                            if (cursor.getParentId() <= 0) {
+                                break;
+                            }
+                            cursor = Emulator.getGameEnvironment().getCatalogManager().getCatalogPage(cursor.getParentId());
+                        }
+                        if (page != null && page.getLayout() != null && page.getLayout().equalsIgnoreCase(CatalogPageLayouts.club_gift.name())) {
                             page = null;
                         }
                     }
