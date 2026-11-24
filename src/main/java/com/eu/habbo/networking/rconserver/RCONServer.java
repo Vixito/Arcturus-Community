@@ -65,6 +65,7 @@ public class RCONServer extends Server {
         this.addRCONMessage("modifysubscription", ModifyUserSubscription.class);
         this.addRCONMessage("changeusername", ChangeUsername.class);
         this.addRCONMessage("reloaduserpermissions", ReloadUserPermissions.class);
+        this.addRCONMessage("removeitems", RemoveItems.class);
 
         Collections.addAll(this.allowedAdresses, Emulator.getConfig().getValue("rcon.allowed", "127.0.0.1").split(";"));
     }
