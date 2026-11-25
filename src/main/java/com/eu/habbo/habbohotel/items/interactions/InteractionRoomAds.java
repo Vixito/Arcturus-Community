@@ -75,45 +75,37 @@ public class InteractionRoomAds extends InteractionCustomValues {
     private List<String> buildInstructionsMessage(String key) {
         List<String> list = new ArrayList<>();
         if ("guitar_hero".equals(key)) {
-            list.add("<b>GUITAR HERO 24/7 - Instrucciones Oficiales</b><div class=\"is-game-instructions\" style=\"display:none;\"></div>");
+            StringBuilder html = new StringBuilder();
+            html.append("<div class=\"is-game-instructions\" data-title=\"¡Guitar Hero 24/7!\" style=\"display:none;\"></div>");
 
-            list.add(buildSection("Como Entrar", "#0284c7", new String[][]{
-                { "1. Haz fila", "Pasa por la puerta negra y avanza por los rollers negros hasta la casilla flecha." },
-                { "2. Un jugador a la vez", "Solo 1 guitarrista puede estar en la cabina. Si esta libre, al pisar la casilla flecha entras automaticamente." },
-                { "3. Si esta ocupada", "Espera en la casilla flecha y pulsa el interruptor de ENTRADA a tu lado en cuanto termine el turno actual." },
-                { "4. Turno de 60 segundos", "Al entrar comienza tu ronda de 60 segundos con marcador y tabla de records en vivo." }
-            }));
+            // Intro block with circular rock emblem floating on the right + curved text wrap (shape-outside: circle)
+            html.append("<div style=\"font-size:12px; line-height:1.45; color:#111827; padding:2px 2px 10px 2px; overflow:hidden; border-bottom:1px solid rgba(0,0,0,0.14);\">");
+            html.append("<img src=\"/img/guitar_hero_circle.png\" alt=\"Guitar Hero 24/7\" style=\"float:right; width:102px; height:102px; border-radius:50%; shape-outside:circle(50%); clip-path:circle(50%); margin:2px 0 6px 12px; border:2px solid #1e293b;\" />");
+            html.append("¡Bienvenido/a a <b>Guitar Hero 24/7</b>! Tu objetivo es simple: toca cada nota de color al ritmo de la pista y sobrevive la canción completa para registrar la mayor puntuación en la tabla.");
+            html.append("</div>");
 
-            list.add(buildSection("Como Jugar", "#16a34a", new String[][]{
-                { "4 Carriles de Color", "Las notas luminosas (Verde, Rojo, Amarillo y Azul) bajan sin parar por los rollers hacia las 4 casillas de color." },
-                { "Pulsa el Interruptor", "Haz doble clic en el interruptor frente a cada carril justo cuando su nota luminosa llegue a la casilla de color." },
-                { "Acierto (+10 pts)", "Cada nota acertada suma +10 puntos reales, enciende los laseres del escenario, suena efecto rock y reinicia la nota." },
-                { "Tabla de Records", "Al finalizar los 60 segundos tu puntuacion se guarda en Mejores Puntuaciones y la cabina queda libre para el siguiente." }
-            }));
+            // Section 1: Cómo jugar (orange Habbo Info Terminal heading)
+            html.append("<div style=\"font-size:12px; line-height:1.45; color:#111827; padding:10px 2px; border-bottom:1px solid rgba(0,0,0,0.14);\">");
+            html.append("<div style=\"font-weight:bold; color:#d97706; font-size:12.5px; margin-bottom:6px;\">Cómo jugar:</div>");
+            html.append("<div style=\"margin-bottom:5px;\">- Haz fila en los rollers negros pasando por la puerta negra hasta llegar a la casilla flecha (solo juega <b>1 persona a la vez</b>).</div>");
+            html.append("<div style=\"margin-bottom:5px;\">- Al entrar a la cabina comenzará una canción de <b>2 minutos</b>. Las notas luminosas (Verde, Rojo, Amarillo y Azul) bajarán por los 4 carriles.</div>");
+            html.append("<div style=\"margin-bottom:5px;\">- Haz doble clic en el interruptor del carril justo cuando la nota llegue a su casilla de color para sumar <b>+10 puntos</b> y encender los láseres del escenario.</div>");
+            html.append("<div>- No necesitas salir manualmente: si sobrevives la canción entera, <b>¡ganas!</b> y el juego te sacará al terminar.</div>");
+            html.append("</div>");
 
-            list.add(buildSection("Salida y Reglas", "#d97706", new String[][]{
-                { "Salir antes de tiempo", "Si quieres ceder tu turno antes de los 60s, haz doble clic en el interruptor derecho de SALIDA." },
-                { "Sin bloqueos", "No te quedes AFK en la casilla flecha para no frenar la fila de rockeros." },
-                { "Juego 24/7", "Las notas, luces y turnos funcionan automaticamente todo el dia sin necesidad de anfitrion." }
-            }));
+            // Section 2: Límites y Claves (orange heading + floating pixel heart on the right!)
+            html.append("<div style=\"font-size:12px; line-height:1.45; color:#111827; padding:10px 2px 4px 2px; overflow:hidden;\">");
+            html.append("<div style=\"font-weight:bold; color:#d97706; font-size:12.5px; margin-bottom:6px;\">Límites y Claves:</div>");
+            html.append("<img src=\"/img/guitar_hero_heart.png\" alt=\"Vidas\" style=\"float:right; width:56px; height:52px; image-rendering:pixelated; shape-outside:circle(50%); margin:2px 4px 6px 10px;\" />");
+            html.append("<div style=\"margin-bottom:4px;\">- <b>3 vidas:</b> si fallas 3 notas, el juego te expulsa automáticamente de la pista.</div>");
+            html.append("<div style=\"margin-bottom:4px;\">- <b>Duración:</b> 2 min (120 s) por canción.</div>");
+            html.append("<div style=\"margin-bottom:4px;\">- <b>Clave Espectadores:</b> di <b>espectador</b> para ir al palco VIP.</div>");
+            html.append("<div style=\"margin-bottom:8px;\">- <b>Volver a jugar:</b> di <b>fila</b> para regresar a la cola.</div>");
+            html.append("<div style=\"color:#334155;\">¡Echa un vistazo a la tabla de <b>Mejores Puntuaciones</b> siempre abierta junto al escenario para ver quién lidera el ranking!</div>");
+            html.append("</div>");
+
+            list.add(html.toString());
         }
         return list;
-    }
-
-    private String buildSection(String title, String accentColor, String[][] rows) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<div class=\"cmd-category-block\" data-category=\"").append(title).append("\" style=\"margin-bottom: 12px;\">");
-        sb.append("<div class=\"cmd-cat-title\" style=\"margin-top: 8px; margin-bottom: 4px; font-weight: bold; color: ").append(accentColor).append("; background: rgba(0,0,0,0.06); padding: 4px 8px; border-radius: 4px;\">");
-        sb.append(title);
-        sb.append("</div>");
-        sb.append("<table class=\"cmd-table\" style=\"width: 100%; border-collapse: collapse;\">");
-        for (String[] r : rows) {
-            sb.append("<tr class=\"cmd-row\" style=\"border-bottom: 1px solid rgba(0,0,0,0.12);\">");
-            sb.append("<td style=\"width: 34%; padding: 5px 4px; vertical-align: middle; font-weight: bold; color: #0f172a;\">").append(r[0]).append("</td>");
-            sb.append("<td style=\"width: 66%; padding: 5px 4px; vertical-align: middle; font-size: 11px; color: #334155;\">").append(r[1]).append("</td>");
-            sb.append("</tr>");
-        }
-        sb.append("</table></div>");
-        return sb.toString();
     }
 }
