@@ -1034,7 +1034,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         message.appendInt(0);
         message.appendInt(this.category);
 
-        String[] tags = Arrays.stream(this.tags.split(";")).filter(t -> !t.isEmpty()).toArray(String[]::new);
+        String[] tags = Arrays.stream(this.tags.split(";")).map(String::trim).filter(t -> !t.isEmpty()).limit(2).toArray(String[]::new);
         message.appendInt(tags.length);
         for (String s : tags) {
             message.appendString(s);
@@ -1866,7 +1866,12 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void setTags(String tags) {
-        this.tags = tags;
+        if (tags == null || tags.trim().isEmpty()) {
+            this.tags = "";
+            return;
+        }
+        String[] cleaned = Arrays.stream(tags.split(";")).map(String::trim).filter(t -> !t.isEmpty()).limit(2).toArray(String[]::new);
+        this.tags = cleaned.length > 0 ? String.join(";", cleaned) + ";" : "";
     }
 
     public int getTradeMode() {
