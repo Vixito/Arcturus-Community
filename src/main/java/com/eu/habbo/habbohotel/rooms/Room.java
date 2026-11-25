@@ -374,6 +374,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 this.loaded = true;
 
                 this.roomCycleTask = Emulator.getThreading().getService().scheduleAtFixedRate(this, 500, 500, TimeUnit.MILLISECONDS);
+                try {
+                    WiredHandler.handle(WiredTriggerType.ROOM_INITIALIZES, null, this, new Object[]{});
+                } catch (Exception e) {
+                    LOGGER.error("Caught exception handling ROOM_INITIALIZES wired trigger", e);
+                }
             } catch (Exception e) {
                 LOGGER.error("Caught exception", e);
             }

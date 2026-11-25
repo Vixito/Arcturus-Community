@@ -35,6 +35,7 @@ public class RoomUserClickFurniEvent extends MessageHandler {
             return;
         }
 
+        WiredHandler.handle(WiredTriggerType.CLICK_TILE, roomUnit, room, new Object[]{ item });
         WiredHandler.handle(WiredTriggerType.CLICK_FURNI, roomUnit, room, new Object[]{ item });
     }
 }

@@ -246,6 +246,8 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_trg_user_performs_action", WiredTriggerUserPerformsAction.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_click_furni", WiredTriggerClickFurni.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_click_tile", WiredTriggerClickTile.class));
+        this.interactionsList.add(new ItemInteraction("wf_trg_room_initializes", WiredTriggerRoomInitializes.class));
+        this.interactionsList.add(new ItemInteraction("wf_trg_clock_counter", WiredTriggerClockCounter.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_leave_room", WiredTriggerLeaveRoom.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_onsay", WiredTriggerHabboSaysKeyword.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_owns_badge", WiredConditionHabboWearsBadge.class));

@@ -37,6 +37,8 @@ public class GameTimer implements Runnable {
         timer.reduceTime();
         if (timer.getTimeNow() < 0) timer.setTimeNow(0);
 
+        WiredHandler.handle(WiredTriggerType.CLOCK_COUNTER, null, room, new Object[]{ timer });
+
         if (timer.getTimeNow() > 0) {
             timer.setThreadActive(true);
             Emulator.getThreading().run(this, 1000);
