@@ -41,9 +41,6 @@ public class ModToolIssueChatlogComposer extends MessageComposer {
 
         Collections.sort(this.chatlog);
 
-        if (this.chatlog.isEmpty())
-            return null;
-
         this.response.appendByte(this.type.getType()); //Report Type
 
         if (this.issue.type == ModToolTicketType.IM) {

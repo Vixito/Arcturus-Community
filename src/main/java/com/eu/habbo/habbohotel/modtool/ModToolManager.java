@@ -579,6 +579,46 @@ public class ModToolManager {
         return false;
     }
 
+    private volatile boolean ticketLogTableReady = false;
+
+    public void logTicketAction(int ticketId, int staffId, String action, String notes) {
+        if (ticketId <= 0) return;
+        Emulator.getThreading().run(() -> {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
+                if (!this.ticketLogTableReady) {
+                    try (PreparedStatement createStmt = connection.prepareStatement(
+                            "CREATE TABLE IF NOT EXISTS support_ticket_logs (" +
+                            "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                            "ticket_id INT NOT NULL, " +
+                            "staff_id INT NOT NULL DEFAULT 0, " +
+                            "action VARCHAR(32) NOT NULL, " +
+                            "notes VARCHAR(500) DEFAULT '', " +
+                            "timestamp INT NOT NULL, " +
+                            "INDEX idx_ticket (ticket_id), " +
+                            "INDEX idx_staff (staff_id), " +
+                            "INDEX idx_ts (timestamp)" +
+                            ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+                    )) {
+                        createStmt.execute();
+                        this.ticketLogTableReady = true;
+                    }
+                }
+                try (PreparedStatement stmt = connection.prepareStatement(
+                        "INSERT INTO support_ticket_logs (ticket_id, staff_id, action, notes, timestamp) VALUES (?, ?, ?, ?, ?)"
+                )) {
+                    stmt.setInt(1, ticketId);
+                    stmt.setInt(2, Math.max(0, staffId));
+                    stmt.setString(3, action != null ? action : "UPDATED");
+                    stmt.setString(4, notes != null ? notes : "");
+                    stmt.setInt(5, Emulator.getIntUnixTimestamp());
+                    stmt.executeUpdate();
+                }
+            } catch (SQLException e) {
+                LOGGER.error("Caught SQL exception logging ticket action", e);
+            }
+        });
+    }
+
     public void pickTicket(ModToolIssue issue, Habbo habbo) {
         issue.modId = habbo.getHabboInfo().getId();
         issue.modName = habbo.getHabboInfo().getUsername();
@@ -586,6 +626,7 @@ public class ModToolManager {
 
         this.updateTicketToMods(issue);
         issue.updateInDatabase();
+        this.logTicketAction(issue.id, issue.modId, "PICKED", "Ticket atendido por " + issue.modName);
     }
 
     public void updateTicketToMods(ModToolIssue issue) {
@@ -622,6 +663,7 @@ public class ModToolManager {
     public void closeTicketAsUseless(ModToolIssue issue, Habbo sender) {
         issue.state = ModToolTicketState.CLOSED;
         issue.updateInDatabase();
+        this.logTicketAction(issue.id, issue.modId, "CLOSED_USELESS", "Cerrado como inutil");
 
         if (sender != null) {
             sender.getClient().sendResponse(new ModToolIssueHandledComposer(ModToolIssueHandledComposer.USELESS));
@@ -635,6 +677,7 @@ public class ModToolManager {
     public void closeTicketAsAbusive(ModToolIssue issue, Habbo sender) {
         issue.state = ModToolTicketState.CLOSED;
         issue.updateInDatabase();
+        this.logTicketAction(issue.id, issue.modId, "CLOSED_ABUSIVE", "Cerrado como abusivo");
         if (sender != null) {
             sender.getClient().sendResponse(new ModToolIssueHandledComposer(ModToolIssueHandledComposer.ABUSIVE));
         }
@@ -647,6 +690,7 @@ public class ModToolManager {
     public void closeTicketAsHandled(ModToolIssue issue, Habbo sender) {
         issue.state = ModToolTicketState.CLOSED;
         issue.updateInDatabase();
+        this.logTicketAction(issue.id, issue.modId, "CLOSED_RESOLVED", "Cerrado como resuelto");
 
         if (sender != null) {
             sender.getClient().sendResponse(new ModToolIssueHandledComposer(ModToolIssueHandledComposer.HANDLED));

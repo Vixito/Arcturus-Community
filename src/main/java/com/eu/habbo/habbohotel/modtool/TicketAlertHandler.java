@@ -13,7 +13,7 @@ public class TicketAlertHandler implements EventListener {
     public static void onSupportTicketEvent(SupportTicketEvent event) throws Exception {
         if (event == null || event.ticket == null) return;
 
-        String message = Emulator.getTexts().getValue("ticketalert.message", "⚠️ <b>Nuevo Ticket de Ayuda:</b> El usuario <b>%username%</b> necesita asistencia. Abre el ModTool para revisarlo.").replace("%username%", event.ticket.senderUsername);
+        String message = Emulator.getTexts().getValue("ticketalert.message", "[!] <b>Nuevo Ticket de Ayuda:</b> El usuario <b>%username%</b> necesita asistencia. Abre el ModTool para atenderlo.").replace("%username%", event.ticket.senderUsername);
 
         for (Habbo habbo : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().values()) {
             if (habbo != null && (habbo.hasPermission("acc_ticket_alert") || habbo.hasPermission("acc_supporttool")) && habbo.getHabboInfo().getCurrentRoom() != null) {

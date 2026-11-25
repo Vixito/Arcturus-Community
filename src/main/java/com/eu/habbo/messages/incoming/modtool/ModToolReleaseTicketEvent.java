@@ -26,10 +26,14 @@ public class ModToolReleaseTicketEvent extends MessageHandler {
                 if (issue.modId != this.client.getHabbo().getHabboInfo().getId())
                     continue;
 
+                int staffId = this.client.getHabbo().getHabboInfo().getId();
+                String staffName = this.client.getHabbo().getHabboInfo().getUsername();
                 issue.modId = 0;
                 issue.modName = "";
                 issue.state = ModToolTicketState.OPEN;
 
+                issue.updateInDatabase();
+                Emulator.getGameEnvironment().getModToolManager().logTicketAction(issue.id, staffId, "RELEASED", "Ticket liberado por " + staffName);
                 Emulator.getGameEnvironment().getModToolManager().updateTicketToMods(issue);
             }
         } else {

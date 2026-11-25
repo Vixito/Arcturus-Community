@@ -14,6 +14,9 @@ public class ModToolRequestRoomVisitsEvent extends MessageHandler {
             int userId = this.packet.readInt();
 
             HabboInfo habboInfo = Emulator.getGameEnvironment().getHabboManager().getHabboInfo(userId);
+            if (habboInfo == null) {
+                habboInfo = com.eu.habbo.habbohotel.users.HabboManager.getOfflineHabboInfo(userId);
+            }
 
             if (habboInfo != null) {
                 this.client.sendResponse(new ModToolUserRoomVisitsComposer(habboInfo, Emulator.getGameEnvironment().getModToolManager().getUserRoomVisits(userId)));
