@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomCategory;
 import com.eu.habbo.habbohotel.rooms.RoomManager;
 import com.eu.habbo.messages.incoming.MessageHandler;
+import com.eu.habbo.messages.outgoing.generic.alerts.GenericErrorMessagesComposer;
 import com.eu.habbo.messages.outgoing.navigator.CanCreateRoomComposer;
 import com.eu.habbo.messages.outgoing.navigator.RoomCreatedComposer;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ public class RequestCreateRoomEvent extends MessageHandler {
 
         if (!Emulator.getGameEnvironment().getRoomManager().layoutExists(modelName)) {
             LOGGER.error("[SCRIPTER] Incorrect layout name \"" + modelName + "\". " + this.client.getHabbo().getHabboInfo().getUsername());
+            this.client.sendResponse(new GenericErrorMessagesComposer(GenericErrorMessagesComposer.ROOM_NAME_UNACCEPTABLE));
             return;
         }
 
@@ -32,6 +34,7 @@ public class RequestCreateRoomEvent extends MessageHandler {
 
         if (category == null || category.getMinRank() > this.client.getHabbo().getHabboInfo().getRank().getId()) {
             LOGGER.error("[SCRIPTER] Incorrect rank or non existing category ID: \"" + categoryId + "\"." + this.client.getHabbo().getHabboInfo().getUsername());
+            this.client.sendResponse(new GenericErrorMessagesComposer(GenericErrorMessagesComposer.ROOM_NAME_UNACCEPTABLE));
             return;
         }
 
@@ -41,11 +44,15 @@ public class RequestCreateRoomEvent extends MessageHandler {
         if (tradeType > 2)
             return;
 
-        if (name.trim().length() < 3 || name.length() > 25 || !Emulator.getGameEnvironment().getWordFilter().filter(name, this.client.getHabbo()).equals(name))
+        if (name.trim().length() < 3 || name.length() > 60 || !Emulator.getGameEnvironment().getWordFilter().filter(name, this.client.getHabbo()).equals(name)) {
+            this.client.sendResponse(new GenericErrorMessagesComposer(GenericErrorMessagesComposer.ROOM_NAME_UNACCEPTABLE));
             return;
+        }
 
-        if (description.length() > 128 || !Emulator.getGameEnvironment().getWordFilter().filter(description, this.client.getHabbo()).equals(description))
+        if (description.length() > 255 || !Emulator.getGameEnvironment().getWordFilter().filter(description, this.client.getHabbo()).equals(description)) {
+            this.client.sendResponse(new GenericErrorMessagesComposer(GenericErrorMessagesComposer.ROOM_NAME_UNACCEPTABLE));
             return;
+        }
 
         int count = Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(this.client.getHabbo()).size();
         int max = this.client.getHabbo().getHabboStats().hasActiveClub() ? RoomManager.MAXIMUM_ROOMS_HC : RoomManager.MAXIMUM_ROOMS_USER;
