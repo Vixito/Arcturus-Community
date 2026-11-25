@@ -28,6 +28,12 @@ public class GameTimer implements Runnable {
             return;
         }
 
+        // Auto-stop & reset cleanly if a WiredGame round lost all active players (e.g. disconnect / room exit mid-song)
+        if (timer.hadWiredPlayers() && !timer.hasWiredGamePlayers(room)) {
+            timer.resetToIdle(room);
+            return;
+        }
+
         timer.reduceTime();
         if (timer.getTimeNow() < 0) timer.setTimeNow(0);
 

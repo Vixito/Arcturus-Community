@@ -32,6 +32,7 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
     private boolean isRunning = false;
     private boolean isPaused = false;
     private boolean threadActive = false;
+    private boolean hadWiredPlayers = false;
 
     public enum InteractionGameTimerAction {
         START_STOP(1),
@@ -193,6 +194,36 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
         return false;
     }
 
+    public boolean hasWiredGamePlayers(Room room) {
+        if (room == null) return false;
+        Game wiredGame = room.getGame(WiredGame.class);
+        if (wiredGame == null) return false;
+        synchronized (wiredGame.getTeams()) {
+            for (com.eu.habbo.habbohotel.games.GameTeam team : wiredGame.getTeams().values()) {
+                if (team != null && !team.getMembers().isEmpty()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean hadWiredPlayers() {
+        return this.hadWiredPlayers;
+    }
+
+    public void resetToIdle(Room room) {
+        this.endGame(room, true);
+        this.isRunning = false;
+        this.isPaused = false;
+        this.threadActive = false;
+        this.hadWiredPlayers = false;
+        this.timeNow = this.baseTime;
+        if (room != null) {
+            room.updateItem(this);
+        }
+    }
+
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         if (this.getExtradata().isEmpty()) {
@@ -201,8 +232,12 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
 
         // if wired triggered it
         if (objects.length >= 2 && objects[1] instanceof WiredEffectType) {
-            if(!(!this.isRunning || this.isPaused))
+            boolean activeWiredPlayers = this.hasWiredGamePlayers(room);
+            if (this.isRunning && !this.isPaused && !activeWiredPlayers) {
+                // Player lost or left team -> cleanly stop & reset timer to baseTime without recording a win
+                this.resetToIdle(room);
                 return;
+            }
 
             boolean wasPaused = this.isPaused;
             this.endGame(room, true);
@@ -216,6 +251,7 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
             this.timeNow = this.baseTime;
             this.isRunning = true;
             this.isPaused = false;
+            this.hadWiredPlayers = activeWiredPlayers;
 
             room.updateItem(this);
             WiredHandler.handle(WiredTriggerType.GAME_STARTS, null, room, new Object[]{});

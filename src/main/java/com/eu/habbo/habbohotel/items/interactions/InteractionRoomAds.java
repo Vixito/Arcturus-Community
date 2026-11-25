@@ -97,11 +97,11 @@ public class InteractionRoomAds extends InteractionCustomValues {
             html.append("<div style=\"font-size:12px; line-height:1.45; color:#111827; padding:10px 2px 4px 2px; overflow:hidden;\">");
             html.append("<div style=\"font-weight:bold; color:#d97706; font-size:12.5px; margin-bottom:6px;\">Límites y Claves:</div>");
             html.append("<img src=\"/img/guitar_hero_heart.png\" alt=\"Vidas\" style=\"float:right; width:56px; height:52px; image-rendering:pixelated; shape-outside:circle(50%); margin:2px 4px 6px 10px;\" />");
-            html.append("<div style=\"margin-bottom:4px;\">- <b>3 vidas:</b> si fallas 3 notas, el juego te expulsa automáticamente de la pista.</div>");
-            html.append("<div style=\"margin-bottom:4px;\">- <b>Duración:</b> 2 min (120 s) por canción.</div>");
-            html.append("<div style=\"margin-bottom:4px;\">- <b>Clave Espectadores:</b> di <b>espectador</b> para ir al palco VIP.</div>");
-            html.append("<div style=\"margin-bottom:8px;\">- <b>Volver a jugar:</b> di <b>fila</b> para regresar a la cola.</div>");
-            html.append("<div style=\"color:#334155;\">¡Echa un vistazo a la tabla de <b>Mejores Puntuaciones</b> siempre abierta junto al escenario para ver quién lidera el ranking!</div>");
+            html.append("<div style=\"margin-bottom:4px;\">- <b>3 vidas:</b> fallar una nota o pulsar un interruptor a destiempo resta 1 vida; al llegar a 3 fallos el juego te expulsa y reinicia el tiempo.</div>");
+            html.append("<div style=\"margin-bottom:4px;\">- <b>Duración:</b> 2 min (120 s). Si sobrevives la canción entera, <b>ganas</b> y tus puntos se registran en el ranking.</div>");
+            html.append("<div style=\"margin-bottom:4px;\">- <b>Clave Espectadores:</b> escribe <b>!espectador</b> para ir al palco VIP.</div>");
+            html.append("<div style=\"margin-bottom:8px;\">- <b>Volver a la fila:</b> escribe <b>!fila</b> para regresar a la cola.</div>");
+            html.append("<div style=\"color:#334155;\">¡Echa un vistazo a la tabla de <b>Mejores Puntuaciones</b> siempre abierta en la esquina derecha para ver quién lidera el ranking!</div>");
             html.append("</div>");
 
             list.add(html.toString());
