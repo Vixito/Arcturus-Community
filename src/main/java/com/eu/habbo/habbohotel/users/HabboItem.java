@@ -297,6 +297,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
 
             if ((this.getBaseItem().getStateCount() > 1 && !(this instanceof InteractionDice)) || Arrays.asList(HabboItem.TOGGLING_INTERACTIONS).contains(this.getClass()) || (objects != null && objects.length == 1 && objects[0].equals("TOGGLE_OVERRIDE"))) {
                 WiredHandler.handle(WiredTriggerType.STATE_CHANGED, client.getHabbo().getRoomUnit(), room, new Object[]{this});
+                WiredHandler.handle(WiredTriggerType.STUFF_STATE, client.getHabbo().getRoomUnit(), room, new Object[]{this});
             }
         }
     }

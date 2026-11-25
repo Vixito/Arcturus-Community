@@ -224,6 +224,67 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
         }
     }
 
+    public void controlStart(Room room) {
+        if (room == null) return;
+        if (this.baseTime <= 0 && this.TIMER_INTERVAL_STEPS.length > 0) {
+            this.baseTime = this.TIMER_INTERVAL_STEPS[0];
+        }
+        this.endGame(room, true);
+        this.createNewGame(room);
+        this.timeNow = this.baseTime;
+        this.isRunning = true;
+        this.isPaused = false;
+        this.hadWiredPlayers = this.hasWiredGamePlayers(room);
+        room.updateItem(this);
+        WiredHandler.handle(WiredTriggerType.GAME_STARTS, null, room, new Object[]{this});
+        if (!this.threadActive) {
+            this.threadActive = true;
+            Emulator.getThreading().run(new GameTimer(this), 1000);
+        }
+    }
+
+    public void controlStop(Room room) {
+        if (room == null) return;
+        boolean wasRunning = this.isRunning;
+        this.endGame(room, false);
+        this.isRunning = false;
+        this.isPaused = false;
+        this.threadActive = false;
+        this.timeNow = 0;
+        room.updateItem(this);
+        if (wasRunning) {
+            WiredHandler.handle(WiredTriggerType.GAME_ENDS, null, room, new Object[]{this});
+        }
+    }
+
+    public void controlReset(Room room) {
+        if (room == null) return;
+        if (this.baseTime <= 0 && this.TIMER_INTERVAL_STEPS.length > 0) {
+            this.baseTime = this.TIMER_INTERVAL_STEPS[0];
+        }
+        this.timeNow = this.baseTime;
+        room.updateItem(this);
+        this.needsUpdate(true);
+    }
+
+    public void controlPause(Room room) {
+        if (room == null || !this.isRunning || this.isPaused) return;
+        this.isPaused = true;
+        this.pause(room);
+        room.updateItem(this);
+    }
+
+    public void controlResume(Room room) {
+        if (room == null || !this.isRunning || !this.isPaused) return;
+        this.isPaused = false;
+        this.unpause(room);
+        room.updateItem(this);
+        if (!this.threadActive) {
+            this.threadActive = true;
+            Emulator.getThreading().run(new GameTimer(this), 1000);
+        }
+    }
+
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         if (this.getExtradata().isEmpty()) {

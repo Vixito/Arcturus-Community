@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTimer;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.wired.WiredFurniSourceHelper;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ClientMessage;
@@ -23,6 +24,7 @@ public class WiredTriggerClockCounter extends InteractionWiredTrigger {
 
     private int minutes = 0;
     private int seconds = 0;
+    private int furniSource = WiredFurniSourceHelper.SOURCE_SELECTED;
     private THashSet<HabboItem> items;
 
     public WiredTriggerClockCounter(ResultSet set, Item baseItem) throws SQLException {
@@ -42,7 +44,8 @@ public class WiredTriggerClockCounter extends InteractionWiredTrigger {
         }
 
         InteractionGameTimer timer = (InteractionGameTimer) stuff[0];
-        if (!this.items.contains(timer)) {
+        THashSet<HabboItem> targetItems = WiredFurniSourceHelper.resolveItems(this, this.furniSource, this.items, room, stuff);
+        if (!targetItems.contains(timer)) {
             return false;
         }
 
@@ -55,6 +58,7 @@ public class WiredTriggerClockCounter extends InteractionWiredTrigger {
         return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
             this.minutes,
             this.seconds,
+            this.furniSource,
             this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
         ));
     }
@@ -64,6 +68,7 @@ public class WiredTriggerClockCounter extends InteractionWiredTrigger {
         this.items = new THashSet<>();
         this.minutes = 0;
         this.seconds = 0;
+        this.furniSource = WiredFurniSourceHelper.SOURCE_SELECTED;
         String wiredData = set.getString("wired_data");
 
         if (wiredData != null && wiredData.startsWith("{")) {
@@ -71,6 +76,7 @@ public class WiredTriggerClockCounter extends InteractionWiredTrigger {
             if (data != null) {
                 this.minutes = Math.max(0, Math.min(10, data.minutes));
                 this.seconds = Math.max(0, Math.min(59, data.seconds));
+                this.furniSource = WiredFurniSourceHelper.normalizeSourceCode(data.furniSource);
                 if (data.itemIds != null && room != null) {
                     for (Integer id : data.itemIds) {
                         HabboItem item = room.getHabboItem(id);
@@ -88,6 +94,7 @@ public class WiredTriggerClockCounter extends InteractionWiredTrigger {
         this.items.clear();
         this.minutes = 0;
         this.seconds = 0;
+        this.furniSource = WiredFurniSourceHelper.SOURCE_SELECTED;
     }
 
     @Override
@@ -119,7 +126,7 @@ public class WiredTriggerClockCounter extends InteractionWiredTrigger {
         message.appendInt(2);
         message.appendInt(this.minutes);
         message.appendInt(this.seconds);
-        message.appendInt(0);
+        message.appendInt(this.furniSource);
         message.appendInt(this.getType().code);
         message.appendInt(0);
     }
@@ -158,6 +165,7 @@ public class WiredTriggerClockCounter extends InteractionWiredTrigger {
             }
         }
 
+        this.furniSource = WiredFurniSourceHelper.readOptionalSourceCode(packet);
         return true;
     }
 
@@ -169,11 +177,13 @@ public class WiredTriggerClockCounter extends InteractionWiredTrigger {
     static class JsonData {
         int minutes;
         int seconds;
+        int furniSource;
         List<Integer> itemIds;
 
-        public JsonData(int minutes, int seconds, List<Integer> itemIds) {
+        public JsonData(int minutes, int seconds, int furniSource, List<Integer> itemIds) {
             this.minutes = minutes;
             this.seconds = seconds;
+            this.furniSource = furniSource;
             this.itemIds = itemIds;
         }
     }

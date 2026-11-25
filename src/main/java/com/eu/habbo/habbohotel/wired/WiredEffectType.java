@@ -33,7 +33,9 @@ public enum WiredEffectType {
     GIVE_VARIABLE(31),
     REMOVE_VARIABLE(32),
     MOVE_ROTATE_USER(33),
-    USER_TO_FURNI(34);
+    USER_TO_FURNI(34),
+    CONTROL_CLOCK(35),
+    SET_ALTITUDE(36);
 
     public final int code;
 

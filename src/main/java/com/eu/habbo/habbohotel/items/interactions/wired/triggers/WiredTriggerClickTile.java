@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredFurniSourceHelper;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ClientMessage;
@@ -24,6 +25,7 @@ public class WiredTriggerClickTile extends InteractionWiredTrigger {
     private static final WiredTriggerType type = WiredTriggerType.CLICK_TILE;
 
     private THashSet<HabboItem> items;
+    private int furniSource = WiredFurniSourceHelper.SOURCE_SELECTED;
 
     public WiredTriggerClickTile(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -46,9 +48,11 @@ public class WiredTriggerClickTile extends InteractionWiredTrigger {
                     }
                 }
 
+                THashSet<HabboItem> targetItems = WiredFurniSourceHelper.resolveItems(this, this.furniSource, this.items, room, stuff);
+
                 if (stuff[0] instanceof RoomTile) {
                     RoomTile tile = (RoomTile) stuff[0];
-                    for (HabboItem item : this.items) {
+                    for (HabboItem item : targetItems) {
                         boolean match = false;
                         if (item.getX() == tile.x && item.getY() == tile.y) {
                             match = true;
@@ -72,7 +76,7 @@ public class WiredTriggerClickTile extends InteractionWiredTrigger {
                     }
                 } else if (stuff[0] instanceof HabboItem) {
                     HabboItem item = (HabboItem) stuff[0];
-                    if (this.items.contains(item)) {
+                    if (targetItems.contains(item)) {
                         long now = System.currentTimeMillis();
                         String key = "last_click_tile_item_" + item.getId();
                         Long lastClick = (Long) roomUnit.getCacheable().get(key);
@@ -91,22 +95,27 @@ public class WiredTriggerClickTile extends InteractionWiredTrigger {
     @Override
     public String getWiredData() {
         return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
-            this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
+            this.items.stream().map(HabboItem::getId).collect(Collectors.toList()),
+            this.furniSource
         ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.items = new THashSet<>();
+        this.furniSource = WiredFurniSourceHelper.SOURCE_SELECTED;
         String wiredData = set.getString("wired_data");
 
         if (wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            if (data != null && data.itemIds != null) {
-                for (Integer id : data.itemIds) {
-                    HabboItem item = room.getHabboItem(id);
-                    if (item != null) {
-                        this.items.add(item);
+            if (data != null) {
+                this.furniSource = WiredFurniSourceHelper.normalizeSourceCode(data.furniSource);
+                if (data.itemIds != null) {
+                    for (Integer id : data.itemIds) {
+                        HabboItem item = room.getHabboItem(id);
+                        if (item != null) {
+                            this.items.add(item);
+                        }
                     }
                 }
             }
@@ -128,6 +137,7 @@ public class WiredTriggerClickTile extends InteractionWiredTrigger {
     @Override
     public void onPickUp() {
         this.items.clear();
+        this.furniSource = WiredFurniSourceHelper.SOURCE_SELECTED;
     }
 
     @Override
@@ -159,26 +169,34 @@ public class WiredTriggerClickTile extends InteractionWiredTrigger {
         message.appendInt(this.getId());
         message.appendString("");
         message.appendInt(0);
-        message.appendInt(0);
+        message.appendInt(this.furniSource);
         message.appendInt(this.getType().code);
         message.appendInt(0);
     }
 
     @Override
     public boolean saveData(ClientMessage packet) {
-        packet.readInt();
+        int intCount = packet.readInt();
+        for (int i = 0; i < intCount; i++) {
+            packet.readInt();
+        }
         packet.readString();
 
         this.items.clear();
 
         int count = packet.readInt();
+        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
         for (int i = 0; i < count; i++) {
-            HabboItem item = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(packet.readInt());
-            if (item != null) {
-                this.items.add(item);
+            int itemId = packet.readInt();
+            if (room != null) {
+                HabboItem item = room.getHabboItem(itemId);
+                if (item != null) {
+                    this.items.add(item);
+                }
             }
         }
 
+        this.furniSource = WiredFurniSourceHelper.readOptionalSourceCode(packet);
         return true;
     }
 
@@ -189,9 +207,11 @@ public class WiredTriggerClickTile extends InteractionWiredTrigger {
 
     static class JsonData {
         List<Integer> itemIds;
+        int furniSource;
 
-        public JsonData(List<Integer> itemIds) {
+        public JsonData(List<Integer> itemIds, int furniSource) {
             this.itemIds = itemIds;
+            this.furniSource = furniSource;
         }
     }
 }

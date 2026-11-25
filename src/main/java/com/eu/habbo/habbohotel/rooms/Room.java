@@ -1233,6 +1233,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         if (!habbo.getRoomUnit().isIdle()) {
                             habbo.getRoomUnit().increaseIdleTimer();
 
+                            int idleTicks = habbo.getRoomUnit().getIdleTimer();
+                            if (idleTicks > 0 && idleTicks % 2 == 0) {
+                                WiredHandler.handle(WiredTriggerType.IDLES, habbo.getRoomUnit(), this, new Object[]{habbo, idleTicks / 2});
+                            }
+
                             if (habbo.getRoomUnit().isIdle()) {
                                 boolean danceIsNone = (habbo.getRoomUnit().getDanceType() == DanceType.NONE);
                                 if (danceIsNone)
@@ -1242,6 +1247,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                             }
                         } else {
                             habbo.getRoomUnit().increaseIdleTimer();
+
+                            int idleTicks = habbo.getRoomUnit().getIdleTimer();
+                            if (idleTicks > 0 && idleTicks % 2 == 0 && (idleTicks / 2) <= 60) {
+                                WiredHandler.handle(WiredTriggerType.IDLES, habbo.getRoomUnit(), this, new Object[]{habbo, idleTicks / 2});
+                            }
 
                             if (!this.isOwner(habbo) && habbo.getRoomUnit().getIdleTimer() >= Room.IDLE_CYCLES_KICK) {
                                 UserExitRoomEvent event = new UserExitRoomEvent(habbo, UserExitRoomEvent.UserExitRoomReason.KICKED_IDLE);
@@ -4190,6 +4200,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
     }
 
+    private static final ThreadLocal<Integer> WIRED_STUFF_STATE_DEPTH = ThreadLocal.withInitial(() -> 0);
+
     public void updateItemState(HabboItem item) {
         if (!item.isLimited()) {
             this.sendComposer(new ItemStateComposer(item).compose());
@@ -4204,6 +4216,18 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
             if(item instanceof InteractionMultiHeight) {
                 ((InteractionMultiHeight)item).updateUnitsOnItem(this);
+            }
+
+            if (!(item instanceof InteractionWired) && this.loaded) {
+                int depth = WIRED_STUFF_STATE_DEPTH.get();
+                if (depth < 8) {
+                    WIRED_STUFF_STATE_DEPTH.set(depth + 1);
+                    try {
+                        WiredHandler.handle(WiredTriggerType.STUFF_STATE, null, this, new Object[]{item});
+                    } finally {
+                        WIRED_STUFF_STATE_DEPTH.set(depth);
+                    }
+                }
             }
         }
     }

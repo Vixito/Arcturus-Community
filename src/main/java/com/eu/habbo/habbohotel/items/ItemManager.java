@@ -248,6 +248,9 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_trg_click_tile", WiredTriggerClickTile.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_room_initializes", WiredTriggerRoomInitializes.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_clock_counter", WiredTriggerClockCounter.class));
+        this.interactionsList.add(new ItemInteraction("wf_trg_user_idles", WiredTriggerUserIdles.class));
+        this.interactionsList.add(new ItemInteraction("wf_trg_user_afk", WiredTriggerUserIdles.class));
+        this.interactionsList.add(new ItemInteraction("wf_trg_stuff_state", WiredTriggerStuffState.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_leave_room", WiredTriggerLeaveRoom.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_onsay", WiredTriggerHabboSaysKeyword.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_owns_badge", WiredConditionHabboWearsBadge.class));
@@ -258,6 +261,8 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_act_remove_var", WiredEffectRemoveVariable.class));
         this.interactionsList.add(new ItemInteraction("wf_act_move_rotate_user", WiredEffectMoveRotateUser.class));
         this.interactionsList.add(new ItemInteraction("wf_act_user_to_furni", WiredEffectMoveUserToFurni.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_control_clock", WiredEffectControlClock.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_set_altitude", WiredEffectSetAltitude.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_has_var", WiredConditionHasVariable.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_neg_has_var", WiredConditionNotHasVariable.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_var_age_match", WiredConditionVariableAge.class));
