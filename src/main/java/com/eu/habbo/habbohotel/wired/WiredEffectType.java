@@ -47,7 +47,8 @@ public enum WiredEffectType {
     UNFREEZE_USER(45),
     ADJUST_CLOCK(46),
     CLOSE_DICE(47),
-    RELATIVE_MOVE(48);
+    RELATIVE_MOVE(48),
+    GIVE_DANCE(49);
 
     public final int code;
 

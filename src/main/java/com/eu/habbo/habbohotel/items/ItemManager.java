@@ -278,6 +278,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_act_adjust_clock", WiredEffectAdjustClock.class));
         this.interactionsList.add(new ItemInteraction("wf_act_close_dice", WiredEffectCloseDice.class));
         this.interactionsList.add(new ItemInteraction("wf_act_rel_mov", WiredEffectRelativeMove.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_give_dance", WiredEffectGiveDance.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_has_var", WiredConditionHasVariable.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_neg_has_var", WiredConditionNotHasVariable.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_var_age_match", WiredConditionVariableAge.class));
