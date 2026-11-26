@@ -96,6 +96,17 @@ public class WiredHighscoreManager {
         }
     }
 
+    public void clearHighscoreDataForItem(int itemId) {
+        this.data.remove(itemId);
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM `items_highscore_data` WHERE `item_id` = ?")) {
+            statement.setInt(1, itemId);
+            statement.execute();
+        } catch (SQLException e) {
+            LOGGER.error("Caught SQL exception", e);
+        }
+    }
+
     public List<WiredHighscoreRow> getHighscoreRowsForItem(int itemId, WiredHighscoreClearType clearType, WiredHighscoreScoreType scoreType) {
         if (!this.data.containsKey(itemId)) return null;
 

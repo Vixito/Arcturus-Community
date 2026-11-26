@@ -35,7 +35,12 @@ public enum WiredEffectType {
     MOVE_ROTATE_USER(33),
     USER_TO_FURNI(34),
     CONTROL_CLOCK(35),
-    SET_ALTITUDE(36);
+    SET_ALTITUDE(36),
+    CALL_STACKS_CONDITIONS(37),
+    SET_VISIBILITY(38),
+    MATCH_COUNTER(39),
+    RESET_HIGHSCORE(40),
+    FURNI_TO_USER(41);
 
     public final int code;
 

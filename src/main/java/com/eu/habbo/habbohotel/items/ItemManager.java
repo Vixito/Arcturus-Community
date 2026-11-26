@@ -263,6 +263,12 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_act_user_to_furni", WiredEffectMoveUserToFurni.class));
         this.interactionsList.add(new ItemInteraction("wf_act_control_clock", WiredEffectControlClock.class));
         this.interactionsList.add(new ItemInteraction("wf_act_set_altitude", WiredEffectSetAltitude.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_call_stacks_cond", WiredEffectCallStacksWithConditions.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_neg_call_stacks", WiredEffectCallStacksWithConditions.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_set_visibility", WiredEffectSetVisibility.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_match_counter", WiredEffectMatchCounter.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_reset_highscore", WiredEffectResetHighscore.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_furni_to_user", WiredEffectFurniToUser.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_has_var", WiredConditionHasVariable.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_neg_has_var", WiredConditionNotHasVariable.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_var_age_match", WiredConditionVariableAge.class));

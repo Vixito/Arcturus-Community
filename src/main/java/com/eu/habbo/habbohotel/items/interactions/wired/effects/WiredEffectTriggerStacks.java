@@ -10,6 +10,7 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredFurniSourceHelper;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 public class WiredEffectTriggerStacks extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.CALL_STACKS;
 
+    private int furniSource = WiredFurniSourceHelper.SOURCE_SELECTED;
     private THashSet<HabboItem> items;
 
     public WiredEffectTriggerStacks(ResultSet set, Item baseItem) throws SQLException {
@@ -60,7 +62,7 @@ public class WiredEffectTriggerStacks extends InteractionWiredEffect {
         message.appendInt(this.getId());
         message.appendString("");
         message.appendInt(0);
-        message.appendInt(0);
+        message.appendInt(this.furniSource);
         message.appendInt(this.getType().code);
         message.appendInt(this.getDelay());
 
@@ -112,8 +114,11 @@ public class WiredEffectTriggerStacks extends InteractionWiredEffect {
         if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
             throw new WiredSaveException("Delay too long");
 
+        int newSource = WiredFurniSourceHelper.readOptionalSourceCode(packet);
+
         this.items.clear();
         this.items.addAll(newItems);
+        this.furniSource = newSource;
         this.setDelay(delay);
 
         return true;
@@ -126,11 +131,12 @@ public class WiredEffectTriggerStacks extends InteractionWiredEffect {
             return false;
         }
 
+        THashSet<HabboItem> targetItems = WiredFurniSourceHelper.resolveItems(this, this.furniSource, this.items, room, stuff);
         THashSet<RoomTile> usedTiles = new THashSet<>();
 
         boolean found;
 
-        for (HabboItem item : this.items) {
+        for (HabboItem item : targetItems) {
             //if(item instanceof InteractionWiredTrigger)
             {
                 found = false;
@@ -159,6 +165,7 @@ public class WiredEffectTriggerStacks extends InteractionWiredEffect {
     public String getWiredData() {
         return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
                 this.getDelay(),
+                this.furniSource,
                 this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
         ));
     }
@@ -166,11 +173,13 @@ public class WiredEffectTriggerStacks extends InteractionWiredEffect {
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.items = new THashSet<>();
+        this.furniSource = WiredFurniSourceHelper.SOURCE_SELECTED;
         String wiredData = set.getString("wired_data");
 
         if (wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
             this.setDelay(data.delay);
+            this.furniSource = WiredFurniSourceHelper.normalizeSourceCode(data.furniSource);
             for (Integer id: data.itemIds) {
                 HabboItem item = room.getHabboItem(id);
                 if (item != null) {
@@ -199,6 +208,7 @@ public class WiredEffectTriggerStacks extends InteractionWiredEffect {
     @Override
     public void onPickUp() {
         this.items.clear();
+        this.furniSource = WiredFurniSourceHelper.SOURCE_SELECTED;
         this.setDelay(0);
     }
 
@@ -214,10 +224,12 @@ public class WiredEffectTriggerStacks extends InteractionWiredEffect {
 
     static class JsonData {
         int delay;
+        int furniSource;
         List<Integer> itemIds;
 
-        public JsonData(int delay, List<Integer> itemIds) {
+        public JsonData(int delay, int furniSource, List<Integer> itemIds) {
             this.delay = delay;
+            this.furniSource = furniSource;
             this.itemIds = itemIds;
         }
     }
