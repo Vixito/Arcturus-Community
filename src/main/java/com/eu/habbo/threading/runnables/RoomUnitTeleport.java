@@ -22,14 +22,22 @@ public class RoomUnitTeleport implements Runnable {
     private double z;
 
     private int newEffect;
+    private int walkMode = 2; // 0 = continue if near goal, 1 = continue walking, 2 = stop walking
+    private RoomTile resumeGoal = null;
 
     public RoomUnitTeleport(RoomUnit roomUnit, Room room, int x, int y, double z, int newEffect) {
+        this(roomUnit, room, x, y, z, newEffect, 2, null);
+    }
+
+    public RoomUnitTeleport(RoomUnit roomUnit, Room room, int x, int y, double z, int newEffect, int walkMode, RoomTile resumeGoal) {
         this.roomUnit = roomUnit;
         this.room = room;
         this.x = x;
         this.y = y;
         this.z = z;
         this.newEffect = newEffect;
+        this.walkMode = walkMode;
+        this.resumeGoal = resumeGoal;
     }
 
     @Override
@@ -39,6 +47,8 @@ public class RoomUnitTeleport implements Runnable {
 
         RoomTile lastLocation = this.roomUnit.getCurrentLocation();
         RoomTile newLocation = this.room.getLayout().getTile((short) this.x, (short) this.y);
+        RoomTile goalToResume = this.resumeGoal != null ? this.resumeGoal : this.roomUnit.getGoal();
+        boolean wasWalking = (this.resumeGoal != null) || this.roomUnit.isWalking();
 
         HabboItem topItem = this.room.getTopItemAt(this.roomUnit.getCurrentLocation().x, this.roomUnit.getCurrentLocation().y);
         if (topItem != null) {
@@ -54,9 +64,7 @@ public class RoomUnitTeleport implements Runnable {
         this.roomUnit.setZ(this.z);
         this.roomUnit.setPreviousLocationZ(this.z);
         this.roomUnit.removeStatus(RoomUnitStatus.MOVE);
-        //ServerMessage teleportMessage = new RoomUnitOnRollerComposer(this.roomUnit, newLocation, this.room).compose();
         this.roomUnit.setLocation(newLocation);
-        //this.room.sendComposer(teleportMessage);
         this.roomUnit.statusUpdate(true);
         roomUnit.isWiredTeleporting = false;
 
@@ -68,6 +76,19 @@ public class RoomUnitTeleport implements Runnable {
             try {
                 topItem.onWalkOn(roomUnit, room, new Object[]{ lastLocation, newLocation, this });
             } catch (Exception e) {
+            }
+        }
+
+        if (wasWalking && goalToResume != null && newLocation != null && !goalToResume.equals(newLocation)) {
+            boolean shouldResume = false;
+            if (this.walkMode == 1) {
+                shouldResume = true;
+            } else if (this.walkMode == 0) {
+                int dist = Math.max(Math.abs(newLocation.x - goalToResume.x), Math.abs(newLocation.y - goalToResume.y));
+                shouldResume = (dist <= 3);
+            }
+            if (shouldResume && this.roomUnit.canWalk()) {
+                this.roomUnit.setGoalLocation(goalToResume);
             }
         }
     }

@@ -447,4 +447,27 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
     public void setTimeNow(int timeNow) {
         this.timeNow = timeNow;
     }
+
+    public void adjustTime(Room room, int mode, int deltaSeconds) {
+        if (room == null) return;
+        int safeDelta = Math.max(0, Math.min(5999, deltaSeconds));
+        int newTime = this.timeNow;
+        if (mode == 0) {
+            // Aumentar
+            newTime = Math.min(5999, this.timeNow + safeDelta);
+        } else if (mode == 1) {
+            // Disminuir
+            newTime = Math.max(0, this.timeNow - safeDelta);
+        } else {
+            // Establecer valor
+            newTime = safeDelta;
+        }
+        this.timeNow = newTime;
+        if (!this.isRunning) {
+            this.baseTime = newTime;
+        }
+        this.setExtradata(this.timeNow + "\t" + this.baseTime);
+        room.updateItem(this);
+        this.needsUpdate(true);
+    }
 }

@@ -44,7 +44,10 @@ public enum WiredEffectType {
     SET_HIGHLIGHT(42),
     SEND_SIGNAL(43),
     FREEZE_USER(44),
-    UNFREEZE_USER(45);
+    UNFREEZE_USER(45),
+    ADJUST_CLOCK(46),
+    CLOSE_DICE(47),
+    RELATIVE_MOVE(48);
 
     public final int code;
 
