@@ -127,7 +127,7 @@ public class WiredEffectClickConf extends InteractionWiredEffect {
         packet.readString();
 
         int furniCount = packet.readInt();
-        if (furniCount > Emulator.getConfig().getInt("hotel.wired.furni.selection.count", 5)) {
+        if (furniCount > Emulator.getConfig().getInt("hotel.wired.furni.selection.count", 20)) {
             return false;
         }
 
