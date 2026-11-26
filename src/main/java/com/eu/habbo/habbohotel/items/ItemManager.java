@@ -251,6 +251,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_trg_user_idles", WiredTriggerUserIdles.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_user_afk", WiredTriggerUserIdles.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_stuff_state", WiredTriggerStuffState.class));
+        this.interactionsList.add(new ItemInteraction("wf_trg_recv_signal", WiredTriggerReceiveSignal.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_leave_room", WiredTriggerLeaveRoom.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_onsay", WiredTriggerHabboSaysKeyword.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_owns_badge", WiredConditionHabboWearsBadge.class));
@@ -269,6 +270,10 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_act_match_counter", WiredEffectMatchCounter.class));
         this.interactionsList.add(new ItemInteraction("wf_act_reset_highscore", WiredEffectResetHighscore.class));
         this.interactionsList.add(new ItemInteraction("wf_act_furni_to_user", WiredEffectFurniToUser.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_set_highlight", WiredEffectSetHighlight.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_send_signal", WiredEffectSendSignal.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_freeze", WiredEffectFreezeUser.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_unfreeze", WiredEffectUnfreezeUser.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_has_var", WiredConditionHasVariable.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_neg_has_var", WiredConditionNotHasVariable.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_var_age_match", WiredConditionVariableAge.class));

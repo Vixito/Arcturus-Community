@@ -4380,13 +4380,18 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
         this.sendComposer(new RoomUnitIdleComposer(habbo.getRoomUnit()).compose());
         WiredHandler.handle(WiredTriggerType.IDLES, habbo.getRoomUnit(), this, new Object[]{habbo});
+        WiredHandler.handle(WiredTriggerType.USER_PERFORMS_ACTION, habbo.getRoomUnit(), this, new Object[]{5});
     }
 
     public void unIdle(Habbo habbo) {
         if (habbo == null || habbo.getRoomUnit() == null) return;
+        boolean wasIdle = habbo.getRoomUnit().isIdle();
         habbo.getRoomUnit().resetIdleTimer();
         this.sendComposer(new RoomUnitIdleComposer(habbo.getRoomUnit()).compose());
         WiredHandler.handle(WiredTriggerType.UNIDLES, habbo.getRoomUnit(), this, new Object[]{habbo});
+        if (wasIdle) {
+            WiredHandler.handle(WiredTriggerType.USER_PERFORMS_ACTION, habbo.getRoomUnit(), this, new Object[]{6});
+        }
     }
 
     public void dance(Habbo habbo, DanceType danceType) {

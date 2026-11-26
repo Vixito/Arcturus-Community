@@ -15,7 +15,9 @@ import java.sql.SQLException;
 public class WiredTriggerUserPerformsAction extends InteractionWiredTrigger {
     public static final WiredTriggerType type = WiredTriggerType.USER_PERFORMS_ACTION;
 
-    private int action = 1; // 1: Wave, 8: Dance, 2: Blow kiss, 3: Laugh, 4: Sit, 5: Idle, 7: Thumb up
+    // 1: Saludar, 2: Lanzar beso, 3: Risas, 7: Confirmado, 6: Despierto, 5: Ausente,
+    // 4: Sentarse, 9: De pie, 10: Tumbado, 11: Señales, 8: Bailar
+    private int action = 1;
 
     public WiredTriggerUserPerformsAction(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -27,11 +29,10 @@ public class WiredTriggerUserPerformsAction extends InteractionWiredTrigger {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        if (stuff != null && stuff.length >= 1) {
-            int performedAction = (int) stuff[0];
+        if (stuff != null && stuff.length >= 1 && stuff[0] instanceof Integer) {
+            int performedAction = (Integer) stuff[0];
             return performedAction == this.action;
         }
-
         return false;
     }
 
@@ -42,10 +43,11 @@ public class WiredTriggerUserPerformsAction extends InteractionWiredTrigger {
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
+        this.action = 1;
         String wiredData = set.getString("wired_data");
         if (wiredData != null && wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            if (data != null) {
+            if (data != null && data.action > 0) {
                 this.action = data.action;
             }
         }
@@ -64,7 +66,7 @@ public class WiredTriggerUserPerformsAction extends InteractionWiredTrigger {
     @Override
     public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
-        message.appendInt(5);
+        message.appendInt(0);
         message.appendInt(0);
         message.appendInt(this.getBaseItem().getSpriteId());
         message.appendInt(this.getId());
@@ -74,17 +76,22 @@ public class WiredTriggerUserPerformsAction extends InteractionWiredTrigger {
         message.appendInt(0);
         message.appendInt(this.getType().code);
         message.appendInt(0);
-        message.appendInt(0);
     }
 
     @Override
     public boolean saveData(ClientMessage packet) {
-        packet.readInt(); // furni count
         int intCount = packet.readInt();
         if (intCount >= 1) {
             this.action = packet.readInt();
         }
+        for (int i = 1; i < intCount; i++) {
+            packet.readInt();
+        }
         packet.readString();
+        int itemCount = packet.readInt();
+        for (int i = 0; i < itemCount; i++) {
+            packet.readInt();
+        }
         return true;
     }
 

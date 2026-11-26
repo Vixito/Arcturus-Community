@@ -40,7 +40,11 @@ public enum WiredEffectType {
     SET_VISIBILITY(38),
     MATCH_COUNTER(39),
     RESET_HIGHSCORE(40),
-    FURNI_TO_USER(41);
+    FURNI_TO_USER(41),
+    SET_HIGHLIGHT(42),
+    SEND_SIGNAL(43),
+    FREEZE_USER(44),
+    UNFREEZE_USER(45);
 
     public final int code;
 

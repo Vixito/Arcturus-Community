@@ -20,6 +20,7 @@ public enum WiredTriggerType {
     ROOM_INITIALIZES(17),
     CLOCK_COUNTER(18),
     STUFF_STATE(20),
+    RECEIVE_SIGNAL(21),
     CLICK_FURNI(4),
     CLICK_TILE(4),
     LEAVE_ROOM(7),

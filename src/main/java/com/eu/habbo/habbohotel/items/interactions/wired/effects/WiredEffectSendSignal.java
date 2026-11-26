@@ -1,0 +1,164 @@
+package com.eu.habbo.habbohotel.items.interactions.wired.effects;
+
+import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.gameclients.GameClient;
+import com.eu.habbo.habbohotel.items.Item;
+import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredFurniSourceHelper;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
+import com.eu.habbo.habbohotel.wired.WiredTriggerType;
+import com.eu.habbo.messages.ClientMessage;
+import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
+import gnu.trove.set.hash.THashSet;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class WiredEffectSendSignal extends InteractionWiredEffect {
+    public static final WiredEffectType type = WiredEffectType.SEND_SIGNAL;
+
+    private int furniSource = WiredFurniSourceHelper.SOURCE_SELECTED;
+    private THashSet<HabboItem> items;
+
+    public WiredEffectSendSignal(ResultSet set, Item baseItem) throws SQLException {
+        super(set, baseItem);
+        this.items = new THashSet<>();
+    }
+
+    public WiredEffectSendSignal(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, userId, item, extradata, limitedStack, limitedSells);
+        this.items = new THashSet<>();
+    }
+
+    @Override
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
+        if (room == null) return false;
+
+        THashSet<HabboItem> antennas = WiredFurniSourceHelper.resolveItems(this, this.furniSource, this.items, room, stuff);
+        if (antennas.isEmpty()) return false;
+
+        for (HabboItem antenna : antennas) {
+            if (antenna == null) continue;
+            WiredHandler.handle(WiredTriggerType.RECEIVE_SIGNAL, roomUnit, room, new Object[]{ antenna, antennas });
+        }
+        return true;
+    }
+
+    @Override
+    public String getWiredData() {
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+            this.furniSource,
+            this.getDelay(),
+            this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
+        ));
+    }
+
+    @Override
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+        this.items = new THashSet<>();
+        this.furniSource = WiredFurniSourceHelper.SOURCE_SELECTED;
+        this.setDelay(0);
+        String wiredData = set.getString("wired_data");
+        if (wiredData != null && wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            if (data != null) {
+                this.furniSource = WiredFurniSourceHelper.normalizeSourceCode(data.furniSource);
+                this.setDelay(data.delay);
+                if (data.itemIds != null && room != null) {
+                    for (Integer id : data.itemIds) {
+                        HabboItem item = room.getHabboItem(id);
+                        if (item != null) this.items.add(item);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onPickUp() {
+        this.items.clear();
+        this.furniSource = WiredFurniSourceHelper.SOURCE_SELECTED;
+        this.setDelay(0);
+    }
+
+    @Override
+    public WiredEffectType getType() {
+        return type;
+    }
+
+    @Override
+    public void serializeWiredData(ServerMessage message, Room room) {
+        THashSet<HabboItem> toRemove = new THashSet<>();
+        for (HabboItem item : this.items) {
+            if (item.getRoomId() != this.getRoomId() || room.getHabboItem(item.getId()) == null) {
+                toRemove.add(item);
+            }
+        }
+        for (HabboItem item : toRemove) this.items.remove(item);
+
+        message.appendBoolean(false);
+        message.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);
+        message.appendInt(this.items.size());
+        for (HabboItem item : this.items) message.appendInt(item.getId());
+        message.appendInt(this.getBaseItem().getSpriteId());
+        message.appendInt(this.getId());
+        message.appendString("");
+        message.appendInt(0);
+        message.appendInt(this.furniSource);
+        message.appendInt(this.getType().code);
+        message.appendInt(this.getDelay());
+        message.appendInt(0);
+    }
+
+    @Override
+    public boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException {
+        int intCount = packet.readInt();
+        for (int i = 0; i < intCount; i++) packet.readInt();
+        packet.readString();
+
+        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+        if (room == null) throw new WiredSaveException("Trying to save wired in unloaded room");
+
+        int itemsCount = packet.readInt();
+        if (itemsCount > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) {
+            throw new WiredSaveException("Too many furni selected");
+        }
+
+        THashSet<HabboItem> newItems = new THashSet<>();
+        for (int i = 0; i < itemsCount; i++) {
+            HabboItem it = room.getHabboItem(packet.readInt());
+            if (it != null) newItems.add(it);
+        }
+
+        int delay = packet.readInt();
+        if (delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20)) {
+            throw new WiredSaveException("Delay too long");
+        }
+
+        int newSource = WiredFurniSourceHelper.readOptionalSourceCode(packet);
+        this.furniSource = newSource;
+        this.items.clear();
+        this.items.addAll(newItems);
+        this.setDelay(delay);
+        return true;
+    }
+
+    static class JsonData {
+        int furniSource;
+        int delay;
+        List<Integer> itemIds;
+
+        public JsonData(int furniSource, int delay, List<Integer> itemIds) {
+            this.furniSource = furniSource;
+            this.delay = delay;
+            this.itemIds = itemIds;
+        }
+    }
+}
