@@ -5,6 +5,8 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
+import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
@@ -13,6 +15,7 @@ import com.eu.habbo.habbohotel.wired.WiredUserSourceHelper;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUserWhisperComposer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,6 +30,7 @@ public class WiredEffectFreezeUser extends InteractionWiredEffect {
     private int effectType = 1;
     private boolean unfreezeOnTeleport = false;
     private int userSource = WiredUserSourceHelper.USER_SOURCE_TRIGGERING;
+    private String message = "";
 
     public WiredEffectFreezeUser(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -55,6 +59,10 @@ public class WiredEffectFreezeUser extends InteractionWiredEffect {
             if (effectId > 0) {
                 room.giveEffect(habbo, effectId, -1);
             }
+            if (this.message != null && !this.message.isEmpty() && habbo.getClient() != null) {
+                String msg = this.message.replace("%user%", habbo.getHabboInfo().getUsername());
+                habbo.getClient().sendResponse(new RoomUserWhisperComposer(new RoomChatMessage(msg, habbo, habbo, RoomChatMessageBubbles.WIRED)));
+            }
         }
         return true;
     }
@@ -65,6 +73,7 @@ public class WiredEffectFreezeUser extends InteractionWiredEffect {
             this.effectType,
             this.unfreezeOnTeleport,
             this.userSource,
+            this.message,
             this.getDelay()
         ));
     }
@@ -74,6 +83,7 @@ public class WiredEffectFreezeUser extends InteractionWiredEffect {
         this.effectType = 1;
         this.unfreezeOnTeleport = false;
         this.userSource = WiredUserSourceHelper.USER_SOURCE_TRIGGERING;
+        this.message = "";
         this.setDelay(0);
 
         String wiredData = set.getString("wired_data");
@@ -83,6 +93,7 @@ public class WiredEffectFreezeUser extends InteractionWiredEffect {
                 this.effectType = Math.max(0, Math.min(5, data.effectType));
                 this.unfreezeOnTeleport = data.unfreezeOnTeleport;
                 this.userSource = WiredUserSourceHelper.normalizeUserSourceCode(data.userSource);
+                this.message = data.message != null ? data.message : "";
                 this.setDelay(data.delay);
             }
         }
@@ -93,6 +104,7 @@ public class WiredEffectFreezeUser extends InteractionWiredEffect {
         this.effectType = 1;
         this.unfreezeOnTeleport = false;
         this.userSource = WiredUserSourceHelper.USER_SOURCE_TRIGGERING;
+        this.message = "";
         this.setDelay(0);
     }
 
@@ -108,7 +120,7 @@ public class WiredEffectFreezeUser extends InteractionWiredEffect {
         message.appendInt(0);
         message.appendInt(this.getBaseItem().getSpriteId());
         message.appendInt(this.getId());
-        message.appendString("");
+        message.appendString(this.message != null ? this.message : "");
         message.appendInt(3);
         message.appendInt(this.effectType);
         message.appendInt(this.unfreezeOnTeleport ? 1 : 0);
@@ -127,7 +139,10 @@ public class WiredEffectFreezeUser extends InteractionWiredEffect {
         int newUserSource = intCount >= 3 ? WiredUserSourceHelper.normalizeUserSourceCode(packet.readInt()) : 0;
         for (int i = 3; i < intCount; i++) packet.readInt();
 
-        packet.readString();
+        String newMsg = packet.readString();
+        if (newMsg == null) newMsg = "";
+        int maxLen = Emulator.getConfig().getInt("hotel.wired.message.max_length", 100);
+        if (newMsg.length() > maxLen) newMsg = newMsg.substring(0, maxLen);
 
         int itemCount = packet.readInt();
         for (int i = 0; i < itemCount; i++) packet.readInt();
@@ -140,6 +155,7 @@ public class WiredEffectFreezeUser extends InteractionWiredEffect {
         this.effectType = newEffect;
         this.unfreezeOnTeleport = newUnfreezeTp;
         this.userSource = newUserSource;
+        this.message = newMsg;
         this.setDelay(delay);
         return true;
     }
@@ -153,12 +169,14 @@ public class WiredEffectFreezeUser extends InteractionWiredEffect {
         int effectType;
         boolean unfreezeOnTeleport;
         int userSource;
+        String message;
         int delay;
 
-        public JsonData(int effectType, boolean unfreezeOnTeleport, int userSource, int delay) {
+        public JsonData(int effectType, boolean unfreezeOnTeleport, int userSource, String message, int delay) {
             this.effectType = effectType;
             this.unfreezeOnTeleport = unfreezeOnTeleport;
             this.userSource = userSource;
+            this.message = message;
             this.delay = delay;
         }
     }

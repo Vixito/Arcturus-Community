@@ -48,7 +48,13 @@ public enum WiredEffectType {
     ADJUST_CLOCK(46),
     CLOSE_DICE(47),
     RELATIVE_MOVE(48),
-    GIVE_DANCE(49);
+    GIVE_DANCE(49),
+    GIVE_EFFECT(50),
+    GIVE_HANDITEM(51),
+    ROOM_MESSAGE(52),
+    TOGGLE_STATE_DOWN(53),
+    COLLISION_NO_MOVE(54),
+    TELEPORT_TEAM(55);
 
     public final int code;
 

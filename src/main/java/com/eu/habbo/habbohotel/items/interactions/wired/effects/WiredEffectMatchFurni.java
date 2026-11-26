@@ -51,6 +51,10 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect implements Int
         this.settings = new THashSet<>(0);
     }
 
+    protected boolean isForceStackBypass() {
+        return false;
+    }
+
     private void applySettingToItem(Room room, HabboItem item, WiredMatchFurniSetting setting) {
         if (item == null || setting == null || room == null || room.getLayout() == null) return;
 
@@ -88,7 +92,11 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect implements Int
                 boolean movedOrRotated = (newLocation != oldLocation || newRotation != item.getRotation() || (hasSavedZ && Math.abs(oldZ - targetZ) > 0.001));
                 if (!movedOrRotated) return;
 
-                if (this.ignoreAvatarCollision || hasSavedZ) {
+                boolean bypass = this.ignoreAvatarCollision || hasSavedZ || this.isForceStackBypass();
+                if (bypass) {
+                    if (this.isForceStackBypass() && !this.ignoreAvatarCollision && newLocation != oldLocation && newLocation.hasUnits()) {
+                        return;
+                    }
                     THashSet<RoomTile> oldTiles = oldLocation != null
                             ? room.getLayout().getTilesAt(oldLocation, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation())
                             : null;

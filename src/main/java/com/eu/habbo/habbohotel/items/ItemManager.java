@@ -194,6 +194,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_trg_enter_room", WiredTriggerHabboEntersRoom.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_says_something", WiredTriggerHabboSaysKeyword.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_periodically", WiredTriggerRepeater.class));
+        this.interactionsList.add(new ItemInteraction("wf_trg_period_short", WiredTriggerRepeaterShort.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_period_long", WiredTriggerRepeaterLong.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_state_changed", WiredTriggerFurniStateToggled.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_at_given_time", WiredTriggerAtSetTime.class));
@@ -279,6 +280,15 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_act_close_dice", WiredEffectCloseDice.class));
         this.interactionsList.add(new ItemInteraction("wf_act_rel_mov", WiredEffectRelativeMove.class));
         this.interactionsList.add(new ItemInteraction("wf_act_give_dance", WiredEffectGiveDance.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_toggle_random", WiredEffectToggleRandom.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_match_to_sshot_x", WiredEffectMatchFurniX.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_room_message", WiredEffectRoomMessage.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_toggle_state_down", WiredEffectToggleStateDown.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_collision_no_move", WiredEffectCollisionNoMove.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_teleport_blue", WiredEffectTeleportTeam.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_teleport_red", WiredEffectTeleportTeam.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_teleport_green", WiredEffectTeleportTeam.class));
+        this.interactionsList.add(new ItemInteraction("wf_act_teleport_yellow", WiredEffectTeleportTeam.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_has_var", WiredConditionHasVariable.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_neg_has_var", WiredConditionNotHasVariable.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_var_age_match", WiredConditionVariableAge.class));
